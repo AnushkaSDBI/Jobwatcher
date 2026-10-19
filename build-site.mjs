@@ -24,7 +24,7 @@ function group(rows) {
 }
 
 const tuple = ({ j, n, cities }) => [j.ref, j.title, j.company, n > 1 ? `${j.city} +${cities.size - 1}` : j.city, j.date, j.flags, j.state, j.dom, j.cell,
-  { m: j.match || 0, s: j.staffing ? 1 : 0, g: n, de: j.de || null, f: j.first }];
+  { m: j.match || 0, s: j.staffing ? 1 : 0, g: n, de: j.de || null, f: j.first, u: j.url || undefined, src: j.src && j.src !== 'ba' ? j.src : undefined }];
 
 export function build({ stateFile = path.join(ROOT, 'data/state.json'), outDir = path.join(ROOT, 'site'), end } = {}) {
   const state = loadState(stateFile);

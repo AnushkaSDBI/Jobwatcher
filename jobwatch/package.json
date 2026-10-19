@@ -1,3 +1,0 @@
-{"name":"jobwatch","version":"1.0.0","type":"module","private":true,
-"scripts":{"collect":"node collect.mjs","build":"node build-site.mjs","test":"node test/run.mjs"},
-"engines":{"node":">=20"}}

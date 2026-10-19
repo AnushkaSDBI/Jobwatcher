@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { QUERIES, normalise, germanFromText, matchScore } from './lib/classify.mjs';
+import { collectExternal } from './lib/ats.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const API = 'https://rest.arbeitsagentur.de/jobboerse/jobsuche-service';
@@ -22,10 +23,10 @@ async function getJson(f, url, tries = 4) {
 }
 
 // One search term -> up to 5 pages x 100 (the API's hard 500 cap per query).
-export async function searchAll(f, term, sinceDays, delay = 250) {
+export async function searchAll(f, term, sinceDays, delay = 250, extra = '') {
   const out = [];
   for (let page = 1; page <= 5; page++) {
-    const u = `${API}/pc/v6/jobs?was=${encodeURIComponent(term)}&size=100&page=${page}&veroeffentlichtseit=${sinceDays}`;
+    const u = `${API}/pc/v6/jobs?${term ? 'was=' + encodeURIComponent(term) + '&' : ''}size=100&page=${page}&veroeffentlichtseit=${sinceDays}${extra}`;
     const j = await getJson(f, u);
     const items = j.ergebnisliste || j.stellenangebote || [];
     if (page === 1 && !Array.isArray(j.ergebnisliste) && !Array.isArray(j.stellenangebote)) throw new Error('unexpected response shape, keys: ' + Object.keys(j));
@@ -34,6 +35,20 @@ export async function searchAll(f, term, sinceDays, delay = 250) {
     await sleep(delay);
   }
   return out;
+}
+
+// Employer-targeted search. The API matches the exact registered employer name ("BMW AG", not "BMW").
+// <=500 postings: take them all. More: split by domain terms so the 500 cap doesn't cut anything relevant.
+const EMP_TERMS = ['Data', 'Daten', 'KI', 'Machine Learning', 'Software', 'Automatisierung', 'Elektrotechnik', 'Robotik', 'Embedded', 'Masterarbeit', 'Bachelorarbeit', 'Abschlussarbeit', 'Werkstudent', 'Praktikum'];
+export async function searchEmployer(f, name, sinceDays, delay = 250) {
+  const extra = '&arbeitgeber=' + encodeURIComponent(name);
+  const u = `${API}/pc/v6/jobs?size=1&page=1&veroeffentlichtseit=${sinceDays}${extra}`;
+  const total = (await getJson(f, u)).maxErgebnisse || 0;
+  if (!total) return [];
+  if (total <= 500) return searchAll(f, '', sinceDays, delay, extra);
+  const got = new Map();
+  for (const t of EMP_TERMS) { for (const it of await searchAll(f, t, sinceDays, delay, extra)) got.set(it.referenznummer, it); await sleep(delay); }
+  return [...got.values()];
 }
 
 export async function fetchDescription(f, ref) {
@@ -48,7 +63,7 @@ export function loadState(file) {
 
 export async function run({ f = fetch, today = new Date().toISOString().slice(0, 10), stateFile = path.join(ROOT, 'data/state.json'),
   profile = JSON.parse(fs.readFileSync(path.join(ROOT, 'profile.json'), 'utf8')),
-  queries = QUERIES, sinceDays = +process.env.SINCE_DAYS || 90, maxDetails = +process.env.MAX_DETAILS || 300, delay = 250, log = console.log } = {}) {
+  queries = QUERIES, agencyNames = JSON.parse(fs.readFileSync(path.join(ROOT, 'agency.json'), 'utf8')).employers, companies = JSON.parse(fs.readFileSync(path.join(ROOT, 'companies.json'), 'utf8')).companies, sources = {}, sinceDays = +process.env.SINCE_DAYS || 90, maxDetails = +process.env.MAX_DETAILS || 300, delay = 250, log = console.log } = {}) {
   const state = loadState(stateFile);
   if (state.runs.some(r => r.date === today)) log(`note: a run for ${today} already exists; merging again`);
   const seen = new Map(); let raw = 0, failed = 0;
@@ -63,15 +78,45 @@ export async function run({ f = fetch, today = new Date().toISOString().slice(0,
       await sleep(delay);
     }
   }
+  let empFailed = 0, empRaw = 0;
+  for (const name of agencyNames) {
+    try {
+      const items = await searchEmployer(f, name, sinceDays, delay);
+      raw += items.length; empRaw += items.length;
+      for (const it of items) { const j = normalise(it, profile); if (j && !seen.has(j.ref)) seen.set(j.ref, j); }
+      log(`employer/${name}: ${items.length}`);
+    } catch (e) { empFailed++; log(`FAILED employer ${name}: ${e.message}`); }
+    await sleep(delay);
+  }
   if (raw === 0) throw new Error('All searches returned 0 postings: API unreachable or response format changed. Aborting without touching state.');
-  const nq = Object.values(queries).flat().length;
+  failed += empFailed;
+  const nq = Object.values(queries).flat().length + agencyNames.length;
   const complete = failed <= Math.floor(nq * 0.1) && seen.size > 0;
+  // External sources (company career systems, aggregators). Same pipeline, lower priority than the Agency copy.
+  const cityInfo = new Map();
+  for (const j of [...Object.values(state.jobs), ...seen.values()]) if (j.city && j.cell && !cityInfo.has(j.city.toLowerCase())) cityInfo.set(j.city.toLowerCase(), { cell: j.cell, state: j.state });
+  const key = j => (j.title + '|' + j.company + '|' + j.city).toLowerCase().replace(/\s+/g, ' ');
+  const have = new Set([...seen.values()].map(key));
+  const terms = ['data', 'machine learning', 'KI', 'automation', 'Elektro', 'Robotik', 'thesis'];
+  const ext = await collectExternal({ f, companies, sources, terms, cities: new Set(cityInfo.keys()), known: new Set(Object.keys(state.jobs)), delay, log });
+  let extKept = 0;
+  const extFail = ext.failed;
+  for (const it of ext.items) {
+    if (it.stub) { if (state.jobs[it.referenznummer]) seen.set(it.referenznummer, state.jobs[it.referenznummer]); continue; } // already known: just mark as still open
+    const j = normalise(it, profile); if (!j || seen.has(j.ref)) continue;
+    const ci = cityInfo.get(j.city.toLowerCase()); if (ci) { j.cell = ci.cell; j.state = ci.state; }
+    if (have.has(key(j))) continue; have.add(key(j));
+    if (it.desc) { j.de = germanFromText(it.desc); j.descDone = true; const m = matchScore(profile, j.title, it.desc); j.match = m.score; j.descMatch = m.score; j.hits = m.hits; }
+    if (!j.date) j.date = today;
+    seen.set(j.ref, j); extKept++;
+  }
+  log(`external: ${ext.items.length} fetched, ${extKept} relevant and new, ${extFail}/${ext.tasks} sources failed`);
   // Merge into state.
   let added = 0;
   for (const [ref, j] of seen) {
     const old = state.jobs[ref];
-    if (old) Object.assign(old, { ...j, first: old.first, de: old.de, descDone: old.descDone, match: old.descMatch ?? j.match, missed: 0, last: today, closed: null });
-    else { state.jobs[ref] = { ...j, first: today, last: today, missed: 0, closed: null, de: null, descDone: false }; added++; }
+    if (old) Object.assign(old, { ...j, first: old.first, de: j.de ?? old.de, descDone: j.descDone ?? old.descDone, match: old.descMatch ?? j.match, missed: 0, last: today, closed: null });
+    else { state.jobs[ref] = { ...j, first: today, last: today, missed: 0, closed: null, de: j.de ?? null, descDone: !!j.descDone }; added++; }
   }
   // Closing: only after a complete run, and only after missing 2 consecutive runs
   // (the 500/query cap means a single miss can just be truncation, not a real closure).
@@ -82,7 +127,7 @@ export async function run({ f = fetch, today = new Date().toISOString().slice(0,
     if (j.missed >= 2) { j.closed = today; closed++; }
   } else log('run incomplete: skipping closure detection');
   // Descriptions: new, non-thesis-or-thesis alike, newest first, capped. Drives German-required + match score.
-  const todo = Object.values(state.jobs).filter(j => !j.descDone && !j.closed).sort((a, b) => b.date.localeCompare(a.date)).slice(0, maxDetails);
+  const todo = Object.values(state.jobs).filter(j => !j.descDone && !j.closed && (j.src || 'ba') === 'ba').sort((a, b) => b.date.localeCompare(a.date)).slice(0, maxDetails);
   let det = 0;
   for (const j of todo) {
     try {

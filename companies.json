@@ -1,0 +1,767 @@
+{
+ "_note": "Add or edit sources by hand, or run `node discover.mjs`. ats: greenhouse|lever|smartrecruiters|recruitee|personio (slug) or workday (host, tenant, site).",
+ "companies": [
+  {
+   "name": "Siemens",
+   "sources": [],
+   "careers": "https://jobs.siemens.com"
+  },
+  {
+   "name": "Siemens Energy",
+   "sources": [],
+   "careers": "https://jobs.siemens-energy.com"
+  },
+  {
+   "name": "Siemens Healthineers",
+   "sources": [],
+   "careers": "https://www.siemens-healthineers.com/de/careers"
+  },
+  {
+   "name": "BMW Group",
+   "sources": [],
+   "careers": "https://www.bmwgroup.jobs"
+  },
+  {
+   "name": "Robert Bosch",
+   "sources": [
+    {
+     "ats": "smartrecruiters",
+     "slug": "robertbosch"
+    }
+   ],
+   "careers": "https://jobs.bosch.com"
+  },
+  {
+   "name": "Bosch Rexroth",
+   "sources": [],
+   "careers": "https://www.boschrexroth.com/de/de/karriere"
+  },
+  {
+   "name": "SAP",
+   "sources": [],
+   "careers": "https://jobs.sap.com"
+  },
+  {
+   "name": "METRO",
+   "sources": [],
+   "candidates": [
+    {
+     "ats": "greenhouse",
+     "slug": "metro",
+     "openings": 1,
+     "who": "Metro East JV"
+    }
+   ],
+   "careers": "https://www.metro.de/karriere"
+  },
+  {
+   "name": "Deutsche Bank",
+   "sources": [],
+   "careers": "https://careers.db.com"
+  },
+  {
+   "name": "Commerzbank",
+   "sources": [],
+   "careers": "https://www.commerzbank.de/karriere"
+  },
+  {
+   "name": "DZ Bank",
+   "sources": []
+  },
+  {
+   "name": "Atruvia",
+   "sources": []
+  },
+  {
+   "name": "Mercedes-Benz",
+   "sources": [],
+   "careers": "https://jobs.mercedes-benz.com"
+  },
+  {
+   "name": "KPMG",
+   "sources": [],
+   "careers": "https://www.kpmg.com/de/de/home/karriere.html"
+  },
+  {
+   "name": "ABB",
+   "sources": [],
+   "careers": "https://careers.abb"
+  },
+  {
+   "name": "AbbVie",
+   "sources": [
+    {
+     "ats": "smartrecruiters",
+     "slug": "abbvie"
+    }
+   ]
+  },
+  {
+   "name": "Accenture",
+   "sources": [],
+   "candidates": [
+    {
+     "ats": "recruitee",
+     "slug": "accenture",
+     "openings": 2,
+     "who": "accenture"
+    }
+   ],
+   "careers": "https://www.accenture.com/de-de/careers",
+   "detected": [
+    {
+     "ats": "workday",
+     "host": "accenture.wd103.myworkdayjobs.com",
+     "tenant": "accenture",
+     "site": "AccentureCareers",
+     "note": "verify site name; see README"
+    },
+    {
+     "ats": "jsonld",
+     "sitemap": "https://www.accenture.com/sitemap-index.xml",
+     "include": "job",
+     "max": 300,
+     "note": "sitemap index; job pages carry JSON-LD (e.g. https://www.accenture.com/ae-en/careers/jobdetails?id=R00362240_en)"
+    }
+   ]
+  },
+  {
+   "name": "Bayer",
+   "sources": [],
+   "careers": "https://career.bayer.de"
+  },
+  {
+   "name": "Lidl",
+   "sources": [],
+   "careers": "https://jobs.lidl.de"
+  },
+  {
+   "name": "Aldi Süd",
+   "sources": [],
+   "careers": "https://karriere.aldi-sued.de"
+  },
+  {
+   "name": "Aldi Nord",
+   "sources": [],
+   "careers": "https://www.aldi-nord.de/karriere"
+  },
+  {
+   "name": "Kaufland",
+   "sources": []
+  },
+  {
+   "name": "Vodafone",
+   "sources": [],
+   "careers": "https://careers.vodafone.de"
+  },
+  {
+   "name": "BSH Hausgeräte",
+   "sources": [],
+   "careers": "https://www.bsh-group.com/de/karriere"
+  },
+  {
+   "name": "Volkswagen",
+   "sources": [],
+   "careers": "https://www.volkswagen-karriere.de"
+  },
+  {
+   "name": "Porsche",
+   "sources": [],
+   "careers": "https://jobs.porsche.com"
+  },
+  {
+   "name": "Audi",
+   "sources": []
+  },
+  {
+   "name": "Continental",
+   "sources": [
+    {
+     "ats": "smartrecruiters",
+     "slug": "continental"
+    }
+   ]
+  },
+  {
+   "name": "ZF Friedrichshafen",
+   "sources": []
+  },
+  {
+   "name": "Schaeffler",
+   "sources": [],
+   "careers": "https://jobs.schaeffler.com"
+  },
+  {
+   "name": "Infineon",
+   "sources": [],
+   "careers": "https://www.infineon.com/cms/en/careers"
+  },
+  {
+   "name": "Allianz",
+   "sources": [],
+   "careers": "https://careers.allianz.com"
+  },
+  {
+   "name": "Munich Re",
+   "sources": []
+  },
+  {
+   "name": "Hannover Rück",
+   "sources": []
+  },
+  {
+   "name": "Deutsche Telekom",
+   "sources": [],
+   "careers": "https://www.telekom.com/de/karriere"
+  },
+  {
+   "name": "T-Systems",
+   "sources": []
+  },
+  {
+   "name": "Deutsche Bahn",
+   "sources": []
+  },
+  {
+   "name": "Deutsche Post DHL",
+   "sources": []
+  },
+  {
+   "name": "Lufthansa",
+   "sources": [],
+   "careers": "https://careers.lufthansagroup.com"
+  },
+  {
+   "name": "Airbus",
+   "sources": [],
+   "careers": "https://www.airbus.com/en/careers",
+   "detected": [
+    {
+     "ats": "workday",
+     "host": "ag.wd3.myworkdayjobs.com",
+     "tenant": "ag",
+     "site": "Airbus",
+     "note": "verify site name; see README"
+    }
+   ]
+  },
+  {
+   "name": "Rheinmetall",
+   "sources": [],
+   "careers": "https://www.rheinmetall.com/de/karriere"
+  },
+  {
+   "name": "BASF",
+   "sources": []
+  },
+  {
+   "name": "Henkel",
+   "sources": []
+  },
+  {
+   "name": "Merck",
+   "sources": []
+  },
+  {
+   "name": "Fresenius",
+   "sources": []
+  },
+  {
+   "name": "adidas",
+   "sources": []
+  },
+  {
+   "name": "Puma",
+   "sources": []
+  },
+  {
+   "name": "E.ON",
+   "sources": []
+  },
+  {
+   "name": "RWE",
+   "sources": []
+  },
+  {
+   "name": "EnBW",
+   "sources": []
+  },
+  {
+   "name": "Vattenfall",
+   "sources": [],
+   "candidates": [
+    {
+     "ats": "smartrecruiters",
+     "slug": "vattenfall",
+     "openings": 283,
+     "who": "Vattenfall"
+    }
+   ]
+  },
+  {
+   "name": "Zalando",
+   "sources": []
+  },
+  {
+   "name": "Delivery Hero",
+   "sources": [],
+   "candidates": [
+    {
+     "ats": "smartrecruiters",
+     "slug": "deliveryhero",
+     "openings": 922,
+     "who": "Delivery Hero"
+    }
+   ]
+  },
+  {
+   "name": "HelloFresh",
+   "sources": [],
+   "candidates": [
+    {
+     "ats": "greenhouse",
+     "slug": "hellofresh",
+     "openings": 400,
+     "who": "HelloFresh"
+    }
+   ]
+  },
+  {
+   "name": "Otto Group",
+   "sources": []
+  },
+  {
+   "name": "REWE Group",
+   "sources": []
+  },
+  {
+   "name": "EDEKA",
+   "sources": []
+  },
+  {
+   "name": "Beiersdorf",
+   "sources": []
+  },
+  {
+   "name": "Covestro",
+   "sources": []
+  },
+  {
+   "name": "Evonik",
+   "sources": []
+  },
+  {
+   "name": "Linde",
+   "sources": []
+  },
+  {
+   "name": "thyssenkrupp",
+   "sources": []
+  },
+  {
+   "name": "TRUMPF",
+   "sources": []
+  },
+  {
+   "name": "Festo",
+   "sources": []
+  },
+  {
+   "name": "Phoenix Contact",
+   "sources": [],
+   "candidates": [
+    {
+     "ats": "greenhouse",
+     "slug": "phoenixcontact",
+     "openings": 51,
+     "who": "Phoenix Contact"
+    }
+   ]
+  },
+  {
+   "name": "Beckhoff",
+   "sources": []
+  },
+  {
+   "name": "WAGO",
+   "sources": []
+  },
+  {
+   "name": "Endress+Hauser",
+   "sources": []
+  },
+  {
+   "name": "SICK",
+   "sources": []
+  },
+  {
+   "name": "KUKA",
+   "sources": []
+  },
+  {
+   "name": "Voith",
+   "sources": []
+  },
+  {
+   "name": "Liebherr",
+   "sources": []
+  },
+  {
+   "name": "Dürr",
+   "sources": []
+  },
+  {
+   "name": "Krones",
+   "sources": []
+  },
+  {
+   "name": "Carl Zeiss",
+   "sources": []
+  },
+  {
+   "name": "Telefónica Germany",
+   "sources": []
+  },
+  {
+   "name": "1&1",
+   "sources": []
+  },
+  {
+   "name": "IONOS",
+   "sources": [],
+   "candidates": [
+    {
+     "ats": "greenhouse",
+     "slug": "ionos",
+     "openings": 38,
+     "who": "IONOS DE"
+    }
+   ]
+  },
+  {
+   "name": "DATEV",
+   "sources": []
+  },
+  {
+   "name": "Software AG",
+   "sources": []
+  },
+  {
+   "name": "Bertelsmann",
+   "sources": []
+  },
+  {
+   "name": "Axel Springer",
+   "sources": []
+  },
+  {
+   "name": "ProSiebenSat.1",
+   "sources": []
+  },
+  {
+   "name": "Sixt",
+   "sources": [],
+   "candidates": [
+    {
+     "ats": "smartrecruiters",
+     "slug": "sixt",
+     "openings": 510,
+     "who": "SIXT"
+    }
+   ]
+  },
+  {
+   "name": "CHECK24",
+   "sources": []
+  },
+  {
+   "name": "Celonis",
+   "sources": [],
+   "candidates": [
+    {
+     "ats": "greenhouse",
+     "slug": "celonis",
+     "openings": 199,
+     "who": "Celonis"
+    }
+   ]
+  },
+  {
+   "name": "Personio",
+   "sources": [],
+   "candidates": [
+    {
+     "ats": "recruitee",
+     "slug": "personio",
+     "openings": 1,
+     "who": "FD Sandbox"
+    },
+    {
+     "ats": "personio",
+     "slug": "personio",
+     "openings": 1,
+     "who": "Personio SE &amp; Co. KG"
+    }
+   ]
+  },
+  {
+   "name": "N26",
+   "sources": [],
+   "candidates": [
+    {
+     "ats": "greenhouse",
+     "slug": "n26",
+     "openings": 34,
+     "who": "N26"
+    }
+   ]
+  },
+  {
+   "name": "Trade Republic",
+   "sources": []
+  },
+  {
+   "name": "Flix",
+   "sources": [],
+   "candidates": [
+    {
+     "ats": "greenhouse",
+     "slug": "flix",
+     "openings": 136,
+     "who": "Flix"
+    }
+   ]
+  },
+  {
+   "name": "AUTO1",
+   "sources": [],
+   "candidates": [
+    {
+     "ats": "smartrecruiters",
+     "slug": "auto1",
+     "openings": 670,
+     "who": "AUTO1 Group"
+    }
+   ]
+  },
+  {
+   "name": "McKinsey",
+   "sources": []
+  },
+  {
+   "name": "Boston Consulting Group",
+   "sources": []
+  },
+  {
+   "name": "Deloitte",
+   "sources": []
+  },
+  {
+   "name": "EY",
+   "sources": [],
+   "candidates": [
+    {
+     "ats": "recruitee",
+     "slug": "ey",
+     "openings": 3,
+     "who": "EY"
+    }
+   ]
+  },
+  {
+   "name": "PwC",
+   "sources": []
+  },
+  {
+   "name": "Capgemini",
+   "sources": []
+  },
+  {
+   "name": "Cognizant",
+   "sources": []
+  },
+  {
+   "name": "IBM",
+   "sources": []
+  },
+  {
+   "name": "Microsoft",
+   "sources": []
+  },
+  {
+   "name": "Google",
+   "sources": [],
+   "candidates": [
+    {
+     "ats": "recruitee",
+     "slug": "google",
+     "openings": 1,
+     "who": "Google"
+    }
+   ]
+  },
+  {
+   "name": "Amazon",
+   "sources": [],
+   "candidates": [
+    {
+     "ats": "personio",
+     "slug": "amazon",
+     "openings": 3
+    }
+   ]
+  },
+  {
+   "name": "Oracle",
+   "sources": []
+  },
+  {
+   "name": "NVIDIA",
+   "sources": []
+  },
+  {
+   "name": "Pfizer",
+   "sources": []
+  },
+  {
+   "name": "Novartis",
+   "sources": []
+  },
+  {
+   "name": "Roche",
+   "sources": []
+  },
+  {
+   "name": "Sanofi",
+   "sources": []
+  },
+  {
+   "name": "Boehringer Ingelheim",
+   "sources": []
+  },
+  {
+   "name": "Merck KGaA",
+   "sources": []
+  },
+  {
+   "name": "Heraeus",
+   "sources": []
+  },
+  {
+   "name": "Wacker",
+   "sources": []
+  },
+  {
+   "name": "Lanxess",
+   "sources": []
+  },
+  {
+   "name": "Knorr-Bremse",
+   "sources": []
+  },
+  {
+   "name": "Hensoldt",
+   "sources": []
+  },
+  {
+   "name": "Diehl",
+   "sources": []
+  },
+  {
+   "name": "MTU Aero Engines",
+   "sources": []
+  },
+  {
+   "name": "Jenoptik",
+   "sources": []
+  },
+  {
+   "name": "Zeiss SMT",
+   "sources": []
+  },
+  {
+   "name": "Bosch Siemens",
+   "sources": []
+  },
+  {
+   "name": "Miele",
+   "sources": []
+  },
+  {
+   "name": "Stihl",
+   "sources": []
+  },
+  {
+   "name": "Würth",
+   "sources": []
+  },
+  {
+   "name": "Hilti",
+   "sources": []
+  },
+  {
+   "name": "Schneider Electric",
+   "sources": []
+  },
+  {
+   "name": "Rockwell Automation",
+   "sources": []
+  },
+  {
+   "name": "Honeywell",
+   "sources": []
+  },
+  {
+   "name": "Emerson",
+   "sources": []
+  },
+  {
+   "name": "Danfoss",
+   "sources": []
+  },
+  {
+   "name": "Mitsubishi Electric",
+   "sources": []
+  },
+  {
+   "name": "Hitachi Energy",
+   "sources": []
+  },
+  {
+   "name": "GE Vernova",
+   "sources": []
+  },
+  {
+   "name": "Sartorius",
+   "sources": []
+  },
+  {
+   "name": "Eppendorf",
+   "sources": []
+  },
+  {
+   "name": "Brenntag",
+   "sources": []
+  },
+  {
+   "name": "Uniper",
+   "sources": []
+  },
+  {
+   "name": "TenneT",
+   "sources": []
+  },
+  {
+   "name": "Amprion",
+   "sources": []
+  },
+  {
+   "name": "50Hertz",
+   "sources": []
+  },
+  {
+   "name": "TransnetBW",
+   "sources": []
+  }
+ ]
+}

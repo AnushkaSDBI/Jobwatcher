@@ -264,11 +264,12 @@ function roleOf(t){var g=ROLES[S.dom],k;for(k in g)if(g[k].test(t))return k;retu
 function jobCard(j){
   var fl=j[5],x=ex(j),tags=[];var rg=roleOf(j[1]);if(rg)tags.push(rg);if(fl&1)tags.push("Home office");if(S.page==="thesis")tags.push(/bachelor/i.test(j[1])&&!/master/i.test(j[1])?"Bachelor thesis":/master/i.test(j[1])?"Master thesis":"Thesis");else if(fl&8)tags.push("Entry / student");if(!(fl&4))tags.push("Part-time");if(fl&2)tags.push("Fixed-term");
   if(x.de==="req")tags.push("German required");else if(x.de==="no")tags.push("No German needed");else if(x.de==="opt")tags.push("German optional");
+  if(x.src)tags.push(({an:"Arbeitnow",az:"Adzuna"})[x.src]||"Company site");
   if(x.s)tags.push("Staffing firm");if(x.g>1)tags.push(x.g+" locations");
   var st=TR[j[0]],m=x.m?'<span class="match" title="Overlap with the skills in profile.json">'+x.m+'% match</span>':"";
   function tb(k,l){return '<button class="trb'+(st===k?" on":"")+'" data-tr="'+esc(j[0])+'|'+k+'" aria-pressed="'+(st===k)+'">'+l+'</button>'}
   return '<article class="job'+(st==="rejected"?" rej":"")+'"><div class="top">'+mono(j[2])+'<b>'+esc(j[2])+'</b>'+m+'<time>First found '+fs(Date.parse(j[4]+"T00:00:00Z"))+'</time></div>'+
-   '<a class="t" href="'+jobUrl(j[0])+'" target="_blank" rel="noopener">'+esc(j[1])+' ↗</a>'+
+   '<a class="t" href="'+esc(x.u||jobUrl(j[0]))+'" target="_blank" rel="noopener">'+esc(j[1])+' ↗</a>'+
    '<div class="loc">'+esc(j[3]||"Location not given")+(j[6]>=0?" · "+esc(D0.states[j[6]]):"")+'</div>'+
    (tags.length?'<div class="tags">'+tags.map(function(t){return '<span class="tag">'+esc(t)+'</span>'}).join("")+'</div>':"")+
    '<div class="trrow">'+tb("saved","Save")+tb("applied","Applied")+tb("rejected","Reject")+'</div></article>';
@@ -446,7 +447,7 @@ function pMine(){
   var groups=[["applied","Applied"],["saved","Saved"],["rejected","Rejected"]],n=Object.keys(TR).length,out="";
   groups.forEach(function(g){var refs=Object.keys(TR).filter(function(r){return TR[r]===g[0]});if(!refs.length)return;
     out+='<h2 style="margin:22px 0 8px">'+g[1]+' ('+refs.length+')</h2><div class="listcol">'+refs.map(function(r){var j=all[r];
-      return j?jobCard(j):'<article class="job"><a class="t" href="'+jobUrl(r)+'" target="_blank" rel="noopener">Posting '+esc(r)+' ↗</a><div class="loc">No longer in the newest listed postings. The link may still work or the posting may have closed.</div><div class="trrow"><button class="trb on" data-tr="'+esc(r)+'|'+g[0]+'">Remove</button></div></article>'}).join("")+'</div>'});
+      return j?jobCard(j):r.indexOf(":")>0?'<article class="job"><b>Posting '+esc(r)+'</b><div class="loc">No longer in the newest listed postings.</div><div class="trrow"><button class="trb on" data-tr="'+esc(r)+'|'+g[0]+'">Remove</button></div></article>':'<article class="job"><a class="t" href="'+jobUrl(r)+'" target="_blank" rel="noopener">Posting '+esc(r)+' ↗</a><div class="loc">No longer in the newest listed postings. The link may still work or the posting may have closed.</div><div class="trrow"><button class="trb on" data-tr="'+esc(r)+'|'+g[0]+'">Remove</button></div></article>'}).join("")+'</div>'});
   return '<section class="hero"><h1>My jobs</h1><p class="lead">Your saved, applied and rejected postings. They are kept in this browser only: no account, nothing is uploaded. Clearing site data or switching browser starts a fresh list.</p></section>'+(n?out:'<div class="empty">Nothing yet. Use Save, Applied or Reject on any posting card.</div>');
 }
 /* ---------- History ---------- */

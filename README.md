@@ -12,6 +12,48 @@ It covers two domains plus theses:
 
 No server, no database, no accounts. The collector is a Node script, the history is one JSON file in the repo, and the site is plain HTML and JS.
 
+## Sources
+
+| Source | What it adds | Setup |
+|---|---|---|
+| Bundesagentur für Arbeit | Broad coverage, mostly small and mid-size employers | none |
+| Company career systems | Postings straight from big employers' own hiring systems | `companies.json` + `node discover.mjs` |
+| Arbeitnow | German postings from several boards | none |
+| Adzuna | Aggregated German postings | free key: set `ADZUNA_APP_ID` and `ADZUNA_APP_KEY` |
+
+Big corporates barely post on the Agency board (a check of Siemens, BMW, Bosch, Mercedes and Bayer returned zero exact-name matches), so for them the career-system route is the one that matters. Postings found by more than one source are merged by title, company and city. Each card shows where it came from.
+
+**LinkedIn, StepStone, Indeed and Glassdoor are not sources.** Their terms forbid scraping and they block bots. This project does not try to get around that.
+
+### Adding companies
+
+`companies.json` lists ~140 large employers in Germany (DAX, big banks, consultancies, automation and robotics firms, retail). Each entry has a `sources` list that starts empty.
+
+```bash
+node discover.mjs                       # probes Greenhouse, Lever, SmartRecruiters, Recruitee, Personio
+node discover.mjs --accept "SAP,Bayer"  # after checking the printed company names are right
+node discover.mjs --accept-all
+node discover.mjs --only "Siemens"      # re-probe one company
+```
+
+Matches are only *candidates* until you accept them, because a slug can belong to a different company with a similar name.
+
+Most large German corporates (Siemens, BMW, Bosch, Mercedes, Deutsche Bank and others) run on enterprise systems that slug-guessing can't find. Workday sites can be added by hand once you know the address from the career site's URL:
+
+```json
+{ "ats": "workday", "host": "company.wd3.myworkdayjobs.com", "tenant": "company", "site": "External" }
+```
+
+For everything else, `detect.mjs` reads each company's career-page URL (from `careers.json`) and looks for a Workday address, a known hiring system, or a sitemap whose job pages carry schema.org `JobPosting` data. The last case works with a generic adapter (`jsonld`), and many SAP SuccessFactors, Phenom and custom career sites publish exactly that.
+
+```bash
+node detect.mjs                      # companies that have a URL in careers.json and no sources yet
+node detect.mjs --only "SAP"
+node detect.mjs --accept "SAP,Bayer" # after reading what it found
+```
+
+Where `detect.mjs` finds nothing readable, the career site renders its jobs in JavaScript behind a private API. Those need a company-specific adapter in `lib/ats.mjs`. Check `robots.txt` and the site's terms before adding one.
+
 ## What you get
 
 - **Hiring map, companies, statistics:** postings per state, per city square, per employer, per week.
@@ -27,9 +69,12 @@ No server, no database, no accounts. The collector is a Node script, the history
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'primaryColor':'#ffffff','primaryBorderColor':'#555555','primaryTextColor':'#222222','lineColor':'#555555','fontFamily':'sans-serif'}}}%%
 flowchart TD
-    subgraph SRC[" Source "]
+    subgraph SRC[" Sources "]
         API["Bundesagentur Jobsuche API<br/>search v6 · details v4"]
+        ATS["Company career systems<br/>Greenhouse · Lever · SmartRecruiters<br/>Personio · Recruitee · Workday"]
+        AGG["Aggregators<br/>Arbeitnow · Adzuna"]
     end
+    CJ["companies.json<br/>target employers"]
 
     subgraph GH[" GitHub Actions · every Monday "]
         T["test/run.mjs<br/>offline tests"]
@@ -48,8 +93,10 @@ flowchart TD
     PG["GitHub Pages<br/>static site"]
     U["Browser<br/>filters, match score,<br/>Saved / Applied / Rejected<br/>in localStorage"]
 
-    API -->|postings| C
-    API -->|posting text| C
+    API -->|postings + text| C
+    ATS --> C
+    AGG --> C
+    CJ --> C
     P --> C
     C <-->|read / write| S
     L <-->|reclassify| S
@@ -59,7 +106,7 @@ flowchart TD
 
     classDef box fill:#ffffff,stroke:#555555,color:#222222;
     classDef store fill:#eeeeee,stroke:#555555,color:#222222;
-    class API,T,C,L,B,P,W,PG,U box;
+    class API,ATS,AGG,CJ,T,C,L,B,P,W,PG,U box;
     class S store;
     style SRC fill:#fafafa,stroke:#999999,stroke-dasharray: 4 3
     style GH fill:#fafafa,stroke:#999999,stroke-dasharray: 4 3
@@ -122,6 +169,8 @@ Optional: add a repository secret named `ANTHROPIC_API_KEY`. The workflow then a
 | Domain keyword rules | `lib/classify.mjs` → `RX_A`, `RX_B` |
 | Staffing-firm list | `lib/classify.mjs` → `RX_STAFF` |
 | German-required patterns | `lib/classify.mjs` → `DE_REQ`, `DE_OPT`, `EN_ONLY` |
+| Target employers and their hiring systems | `companies.json` |
+| Turn off an aggregator | `sources: { arbeitnow: false }` in `run()` options |
 | Time window (default 90 days) | env `SINCE_DAYS` |
 | Job-detail fetches per run (default 300) | env `MAX_DETAILS` |
 
@@ -134,6 +183,9 @@ collect.mjs         search + detail fetch, merge into state, closure detection
 build-site.mjs      state → site data files (grouping, aggregates, history)
 llm-classify.mjs    optional Claude re-classification of ambiguous postings
 profile.json        your skills for the match score
+lib/ats.mjs         adapters for company career systems and aggregators
+companies.json      target employers and their sources
+discover.mjs        finds which hiring system each company uses
 lib/classify.mjs    queries, regexes, scoring, normalisation (pure functions)
 data/state.json     the history (created by the first run)
 site/               static site: index.html + generated d0, dca, dcb, dj1, dt, dh .js
@@ -146,11 +198,12 @@ test/               offline test with a recorded-shape fixture and mock API
 - **Source:** the Jobsuche service behind arbeitsagentur.de (public, key `jobboerse-jobsuche`). Search uses the `v6` endpoint, job text uses `v4`. The `v6` details endpoint returns 403.
 - **Scope:** Germany only. The API also returns Austrian and Swiss postings, which are dropped.
 - **Dates:** a posting's date is its first publication date at the Agency. Reposts keep their old date.
+- **External postings** have no coordinates; they get a map square and state only when their city already appears in Agency data. External dates are the posting date where the system gives one, otherwise the day it was first seen.
 - **Site data:** the list holds the newest 400 postings per domain, thesis list up to 300 per domain. Company tables show the top 150 employers per domain.
 
 ## Limits
 
-- **One source.** It covers the Agency board only. LinkedIn, Indeed and StepStone block scraping. Company career-page APIs (Greenhouse, Personio, SmartRecruiters) are not included.
+- **Coverage is partial.** LinkedIn, StepStone, Indeed and Glassdoor are not covered. Company career systems are covered only where an adapter exists and the company is configured. Many large corporates still need a manual Workday entry or a custom adapter.
 - **No history on day one.** Net change and closed postings need at least two weekly runs. The weekly counts of a single snapshot undercount older weeks, because postings that already closed are missing.
 - **500 results per search term.** Broad terms are cut off, so totals are lower bounds.
 - **Keyword classification.** Domains are decided by words in the title and job categories. Some false hits and misses remain. The optional Claude pass only looks at postings that matched both domains.
@@ -168,6 +221,7 @@ test/               offline test with a recorded-shape fixture and mock API
 | Every search logs `0` | The API response format changed or the API is unreachable. The collector now aborts in that case. Print one raw response and check the result key (currently `ergebnisliste`). |
 | `data/state.json has no jobs` | Run `node collect.mjs` before `node build-site.mjs`. |
 | Site shows `0 postings` or garbled umlauts | Old build. Use the current `site/index.html` and re-run `build-site.mjs`. |
+| `FAILED <company>/<system>` in the log | That company's slug or system is wrong or the feed is down. Other sources still run; fix or remove the entry in `companies.json`. |
 | `HTTP 403` or `429` in the log | Rate limiting or blocking. Raise `delay` in `collect.mjs`, wait, and retry. |
 | Actions run can't push | Settings → Actions → General → Workflow permissions → *Read and write*. |
 
@@ -181,4 +235,4 @@ It's a public but unofficial interface and can change without notice. The collec
 node test/run.mjs
 ```
 
-Runs the collector against a mock API over three simulated weekly runs and checks: domain classification, staffing tags, German-required detection, duplicate grouping, closure after two missed runs, Austria filtering, and the optional Claude pass with a mocked response. It does not call the real API.
+Runs the collector against a mock API over three simulated weekly runs, plus mocked career-system and aggregator feeds, and checks: domain classification, staffing tags, German-required detection, duplicate grouping, closure after two missed runs, Austria filtering, each adapter's output shape, cross-source de-duplication, and the optional Claude pass with a mocked response. It does not call the real API.
