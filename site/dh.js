@@ -1,0 +1,1 @@
+window.HP_DATA.history={runs:[{"date":"2026-10-19","a":1694,"b":4727,"ta":28,"tb":43,"added":6370,"closed":0,"complete":true}],closed:[]};

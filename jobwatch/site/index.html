@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
+<title>Hiring Pulse Germany</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: sticky brand bar with five pages, a domain switch, then one page body. Dark-first teal-black like the reference. */
+:root {
+  --bg:#0c1311; --panel:#101a16; --panel2:#14211c; --line:#21322b; --text:#e6efe9; --muted:#8ea398;
+  --accent:#7ed9b1; --accent-ink:#0c1311; --neg:#ea9790; --add:#35574a; --sel:#17291f; --focus:#7ed9b1;
+  --sans:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:#f3f6f4; --panel:#ffffff; --panel2:#f7faf8; --line:#d9e3de; --text:#14211b; --muted:#5d7167;
+    --accent:#17805a; --accent-ink:#ffffff; --neg:#bf4f46; --add:#a9d9c2; --sel:#e8f3ee; --focus:#17805a; color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg:#f3f6f4; --panel:#ffffff; --panel2:#f7faf8; --line:#d9e3de; --text:#14211b; --muted:#5d7167;
+  --accent:#17805a; --accent-ink:#ffffff; --neg:#bf4f46; --add:#a9d9c2; --sel:#e8f3ee; --focus:#17805a; color-scheme: light;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font:15px/1.45 var(--sans);padding-block:0 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--bg)}
+.wrap{max-width:1240px;margin:0 auto}
+button,select,input{font:inherit;color:inherit}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.pos{color:var(--accent)} .neg{color:var(--neg)} .flat{color:var(--muted)}
+
+header.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;margin-top:14px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:10px 14px;background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;white-space:nowrap}
+.brand i{width:26px;height:26px;border-radius:8px;background:var(--accent);display:grid;place-items:center}
+.brand i::after{content:"";width:9px;height:9px;border-radius:50%;background:var(--panel)}
+.beta{font:600 11px var(--mono);letter-spacing:.06em;padding:2px 7px;border-radius:6px;background:var(--sel);color:var(--accent);border:1px solid var(--line)}
+nav.pages{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.pg{border:1px solid transparent;background:none;padding:8px 12px;border-radius:10px;cursor:pointer;color:var(--muted);font-weight:600}
+.pg:hover{color:var(--text)}
+.pg[aria-current="page"]{background:var(--sel);color:var(--accent);border-color:var(--line)}
+.theme{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:none;cursor:pointer}
+
+.domains{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+.dm{flex:1 1 240px;max-width:380px;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;cursor:pointer}
+.dm b{display:block;font-weight:700}
+.dm span{color:var(--muted);font-size:13px}
+.dm[aria-pressed="true"]{border-color:var(--accent);background:var(--sel)}
+.dm[aria-pressed="true"] b{color:var(--accent)}
+
+h1{font-size:clamp(26px,4.4vw,44px);line-height:1.15;font-weight:600;letter-spacing:-.015em;margin:26px 0 10px;text-wrap:balance}
+h2{font-size:20px;margin:0 0 6px;font-weight:700}
+.lead{color:var(--muted);max-width:70ch;margin:0 0 18px}
+.eyebrow{font:600 12px var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin:26px 0 0}
+.chip{font-family:var(--mono);font-weight:600;font-size:.8em;padding:.04em .32em;border-radius:8px;background:var(--panel);border:1px solid var(--line);white-space:nowrap}
+.live{font:600 11px var(--mono);letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:6px;border:1px solid var(--accent);color:var(--accent);white-space:nowrap}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:18px 0}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.kpi small{display:block;color:var(--muted);font-size:13px}
+.kpi strong{font-size:30px;font-weight:600;line-height:1.2;font-variant-numeric:tabular-nums}
+.kpi em{display:block;font-style:normal;color:var(--muted);font-size:12px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;margin:12px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.card h3{font-size:15px;margin:0 0 10px;font-weight:700}
+.card p.note{color:var(--muted);font-size:13px;margin:8px 0 0}
+.hb{display:grid;grid-template-columns:minmax(80px,38%) 1fr auto;gap:8px;align-items:center;margin:6px 0;font-size:14px}
+.hb span.l{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hb .tr{height:10px;background:var(--panel2);border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+.hb .tr i{display:block;height:100%;background:var(--accent);border-radius:6px}
+.hb b{font-variant-numeric:tabular-nums}
+.meters{display:grid;gap:10px}
+.meter{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:14px}
+.meter .tr{grid-column:1/-1;height:8px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.meter .tr i{display:block;height:100%;background:var(--accent)}
+svg.bars{width:100%;height:auto;display:block}
+svg.bars text{fill:var(--muted);font:11px var(--sans)}
+svg.bars .grid{stroke:var(--line)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:14px 0}
+.tile{display:block;text-decoration:none;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer;text-align:left}
+.tile:hover{border-color:var(--accent)}
+.tile b{display:block;color:var(--accent)}
+.tile span{color:var(--muted);font-size:13px}
+
+.controls{display:grid;grid-template-columns:minmax(180px,1fr) auto auto auto;gap:8px;align-items:stretch}
+.ctl{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+.ctl.search{display:flex;align-items:center;gap:10px}
+.ctl.search input{flex:1;min-width:0;background:none;border:0;outline:0}
+.ctl.search:focus-within{outline:2px solid var(--focus);outline-offset:2px}
+.ctl.search span{color:var(--muted);font-size:13px;white-space:nowrap}
+select.ctl{cursor:pointer;font-weight:600;background:var(--panel)}
+button.ctl{cursor:pointer;font-weight:600}
+button.ctl.on{background:var(--sel);color:var(--accent);border-color:var(--accent)}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel)}
+.seg button{border:0;background:none;padding:10px 14px;cursor:pointer;font-weight:600;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--sel);color:var(--accent)}
+@media (max-width:760px){.controls{grid-template-columns:1fr 1fr}.ctl.search{grid-column:1/-1}}
+
+.tablewrap{margin-top:12px;overflow-x:auto;border-top:1px solid var(--line)}
+.tbl{min-width:820px}
+.row{display:grid;grid-template-columns:minmax(210px,1.5fr) 70px 78px minmax(250px,2.6fr) 76px 100px;align-items:center;border-bottom:1px solid var(--line);min-height:40px}
+.row.co{grid-template-columns:minmax(220px,2fr) 90px 90px 80px 80px minmax(110px,1fr)}
+.row>*{padding:0 10px}
+.hd{font-weight:600;font-size:14px;min-height:44px}
+.r{text-align:right}
+.co-btn{display:flex;align-items:center;gap:8px;min-width:0;background:none;border:1px solid transparent;border-radius:10px;padding:5px 8px;cursor:pointer;color:var(--accent);font-weight:600;text-align:left;width:100%}
+.co-btn:hover{background:var(--panel)}
+.co-btn[aria-expanded="true"]{border-color:var(--accent)}
+.co-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mono-logo{flex:none;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font:700 12px var(--sans);color:#fff}
+.chev{flex:none;color:var(--muted);transition:transform .15s}
+.co-btn[aria-expanded="true"] .chev{transform:rotate(90deg)}
+.plot{position:relative;align-self:stretch;padding:0 !important}
+.plot .in{position:absolute;inset:0 26px;
+  background:
+   linear-gradient(var(--line),var(--line)) 0 0/1px 100% no-repeat,
+   linear-gradient(var(--line),var(--line)) 25% 0/1px 100% no-repeat,
+   linear-gradient(var(--muted),var(--muted)) 50% 0/1px 100% no-repeat,
+   linear-gradient(var(--line),var(--line)) 75% 0/1px 100% no-repeat,
+   linear-gradient(var(--line),var(--line)) 100% 0/1px 100% no-repeat}
+.hd .plot .in{background:none}
+.hd .plot span{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:13px;white-space:nowrap}
+.dot{position:absolute;top:50%;width:20px;height:20px;border-radius:50%;transform:translate(-50%,-50%)}
+.dot.p{background:var(--accent)} .dot.n{background:var(--neg)}
+svg.spark{width:78px;height:22px;display:block;margin-left:auto}
+.detail{background:var(--panel2);border-bottom:1px solid var(--line);border-left:3px solid var(--accent);padding:14px 16px 12px}
+.dstats{display:flex;flex-wrap:wrap;gap:14px 40px;align-items:flex-start}
+.dstat small{display:block;color:var(--muted);font-size:13px}
+.dstat strong{font-size:26px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.2}
+.dstat em{display:block;font-style:normal;font-size:12px;color:var(--muted)}
+.dlinks{margin-left:auto;display:flex;gap:8px}
+.btn{border:1px solid var(--accent);color:var(--accent);border-radius:10px;padding:9px 14px;text-decoration:none;font-weight:600;background:var(--sel);cursor:pointer;display:inline-block}
+.btn:hover{filter:brightness(1.15)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.match{margin-left:auto;font-size:12px;font-weight:600;border:1px solid var(--line);border-radius:6px;padding:2px 8px;color:var(--text)}
+.trrow{display:flex;gap:6px;margin-top:10px}.trb{font:inherit;font-size:12px;border:1px solid var(--line);background:transparent;color:var(--text);border-radius:6px;padding:3px 10px;cursor:pointer}.trb.on{background:var(--text);color:var(--bg)}
+.job.rej{opacity:.5}.hist{display:grid;gap:4px;margin-top:10px;font-size:13px}.hrow{display:grid;grid-template-columns:110px 70px 1fr 1fr;gap:8px}
+.tag{font-size:12px;border:1px solid var(--line);border-radius:6px;padding:2px 8px;background:var(--panel);color:var(--text)}
+.empty{padding:36px 12px;text-align:center;color:var(--muted)}
+
+.mapbody{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:12px;margin-top:10px;align-items:start}
+.mapbody.v-map{grid-template-columns:minmax(0,1fr)}
+.mapbody.v-list{grid-template-columns:minmax(0,760px)}
+@media (max-width:900px){.mapbody{grid-template-columns:minmax(0,1fr)}}
+.mapbox{position:relative;background:var(--panel2);border:1px solid var(--line);border-radius:12px;overflow:hidden;min-height:420px}
+svg.map{width:100%;height:auto;max-height:78vh;display:block;margin:0 auto}
+svg.map .outline{fill:none;stroke:var(--muted);stroke-width:1;opacity:.55}
+svg.map text{fill:var(--text);font:600 11px var(--sans);paint-order:stroke;stroke:var(--panel2);stroke-width:3px;pointer-events:none}
+svg.map rect.cell{cursor:pointer}
+svg.map rect.cell:hover{stroke:var(--text);stroke-width:1.5}
+svg.map rect.sel{stroke:var(--accent);stroke-width:2.5}
+.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:13px;z-index:4;white-space:nowrap}
+.legendbar{position:absolute;right:12px;bottom:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 12px;font-size:13px;display:flex;align-items:center;gap:8px}
+.legendbar i{display:block;width:110px;height:8px;border-radius:5px;background:linear-gradient(90deg,hsl(225 55% 38%),hsl(285 60% 48%),hsl(345 75% 55%))}
+.covbtn{position:absolute;left:12px;bottom:12px}
+.covnote{position:absolute;left:12px;bottom:52px;max-width:340px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--muted);z-index:4}
+.fpanel{position:absolute;left:10px;top:10px;z-index:5;width:min(320px,calc(100% - 20px));background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:10px;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.fpanel label{display:grid;gap:4px;font-size:13px;color:var(--muted)}
+.fpanel select{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px;font-weight:600}
+.fpanel .seg{width:100%}.fpanel .seg button{flex:1;padding:8px}
+.listcol{display:grid;gap:10px;max-height:78vh;overflow:auto;padding-right:2px;min-width:0}
+.mapbody.v-list .listcol{max-height:none}
+.job{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.job .top{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
+.job .top b{color:var(--text);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.job .top time{margin-left:auto;white-space:nowrap}
+.job a.t{display:block;margin:8px 0 4px;font-weight:700;font-size:16px;color:var(--accent);text-decoration:none;overflow-wrap:anywhere}
+.job a.t:hover{text-decoration:underline}
+.job .loc{color:var(--muted);font-size:13px}
+.more{justify-self:center}
+.hint{color:var(--muted);font-size:13px;margin:8px 0 0}
+
+.hero p.lead{font-size:17px}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin:12px 0 22px}
+.dcard small{display:block;font:600 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.dcard h3{margin:0 0 6px;font-size:16px}
+.dcard p{margin:0;color:var(--muted);font-size:14px}
+.sect{border-top:1px solid var(--line);margin-top:26px;padding-top:22px}
+ul.lim{margin:8px 0 0;padding-left:18px;color:var(--muted);display:grid;gap:6px;max-width:80ch}
+ul.lim b{color:var(--text)}
+footer{margin-top:28px;color:var(--muted);font-size:13px;max-width:80ch}
+@media (prefers-reduced-motion:reduce){.chev{transition:none}}
+</style>
+
+<div class="wrap">
+  <header class="bar">
+    <div class="brand"><i aria-hidden="true"></i>Hiring Pulse <span class="beta">BETA</span></div>
+    <nav class="pages" aria-label="Pages" id="nav"></nav>
+    <button class="theme" id="theme" aria-label="Toggle theme" title="Toggle theme">◐</button>
+  </header>
+  <div class="domains" id="domains" role="group" aria-label="Domain"></div>
+  <main id="app"></main>
+  <footer id="foot"></footer>
+</div>
+
+<script src="d0.js"></script><script src="dca.js"></script><script src="dcb.js"></script><script src="dj1.js"></script><script src="dt.js"></script><script src="dh.js"></script>
+<script>
+(function(){
+var D0=window.HP_DATA;
+var END=Date.UTC(2026,9,19), DAY=864e5, MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var DOM={a:{label:"Data & AI",scope:"data science, BI, ML, NLP and AI roles"},b:{label:"Industry 4.0 & Robotics",scope:"Industry 4.0, electrical engineering, automation and robotics roles"}};
+var PAGES=[["home","Home"],["map","Hiring map"],["companies","Companies"],["stats","Statistics"],["thesis","Thesis"],["mine","My jobs"],["data","Data"]];
+var ROLES={a:{"Data science, ML & AI":/scientist|machine|\bml\b|\bki\b|\bai\b|nlp|llm|künstlich|generative|deep|vision|statist/i,"Data engineering":/engineer|architect|warehouse|dwh|etl|datenbank|platform|ops/i,"BI & analytics":/\bbi\b|business intelligence|analy|reporting|tableau|power ?bi|controlling/i},
+ b:{"Automation & PLC":/automat|\bsps\b|plc|steuerung|scada|inbetriebnahme|prozess|regelung|\bmes\b/i,"Embedded & hardware":/embedded|hardware|firmware|fpga|elektronik/i,"Electrical & power":/elektro|energie|leistung|antrieb|e-technik|messtechnik/i,"Robotics & mechatronics":/robot|mechatronik|cyber/i}};
+var CITIES=[["Berlin",52.52,13.40],["Hamburg",53.55,10.0],["München",48.14,11.58],["Köln",50.94,6.96],["Frankfurt",50.11,8.68],["Stuttgart",48.78,9.18],["Düsseldorf",51.23,6.78],["Dresden",51.05,13.74],["Leipzig",51.34,12.37],["Hannover",52.37,9.73],["Nürnberg",49.45,11.08],["Bremen",53.08,8.80]];
+var OUTLINE=[[54.9,8.65],[54.85,9.45],[54.75,10.0],[54.45,10.2],[54.4,10.8],[54.0,10.9],[53.9,11.45],[54.2,12.1],[54.45,12.5],[54.6,13.4],[54.1,14.2],[53.9,14.25],[53.0,14.2],[52.3,14.6],[51.5,15.0],[51.15,14.95],[50.9,14.5],[50.5,13.0],[50.25,12.1],[49.75,12.5],[49.1,13.2],[48.77,13.84],[48.5,13.4],[47.95,12.8],[47.6,13.05],[47.55,12.45],[47.55,11.6],[47.4,10.9],[47.55,10.1],[47.55,9.65],[47.7,8.8],[47.6,8.0],[47.55,7.6],[48.5,7.8],[49.05,8.2],[49.2,7.05],[49.5,6.35],[50.1,6.15],[50.8,6.05],[51.5,6.1],[51.95,6.7],[52.8,7.05],[53.35,7.2],[53.55,8.1],[53.87,8.7],[54.1,8.85],[54.5,8.9]];
+function $(i){return document.getElementById(i)}
+function pad(n){return (n<10?"0":"")+n}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function nf(n){return Math.abs(Math.round(n)).toLocaleString("en-US")}
+function sgn(n){return n>0?"+"+nf(n):n<0?"−"+nf(n):"—"}
+function fd(t){var d=new Date(t);return pad(d.getUTCDate())+"."+pad(d.getUTCMonth()+1)+"."+d.getUTCFullYear()}
+function fs(t){var d=new Date(t);return d.getUTCDate()+" "+MON[d.getUTCMonth()]}
+function hash(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function mono(n){return '<span class="mono-logo" style="background:hsl('+(hash(n)%360)+' 42% 40%)" aria-hidden="true">'+esc(n.charAt(0).toUpperCase())+'</span>'}
+function wkEnd(k){return END-(12-k)*7*DAY}
+function jobUrl(r){return "https://www.arbeitsagentur.de/jobsuche/jobdetail/"+encodeURIComponent(r)}
+function coUrl(n){return "https://www.arbeitsagentur.de/jobsuche/suche?angebotsart=1&was="+encodeURIComponent(n)}
+
+var S={page:"home",dom:"a",weeks:4,sort:"new",csort:"jobs",q:"",cq:"",open:null,view:"split",fOpen:false,cov:false,shown:40,t:{q:"",lv:"all",state:"all",shown:40},f:{role:"all",sen:"all",date:"all",state:"all",de:"all",co:"all",remote:false,cell:null,q:"",staff:"",mm:"0"}};
+var TR={};try{TR=JSON.parse(localStorage.getItem("hp_track")||"{}")}catch(e){TR={}}
+function trSet(ref,st){if(TR[ref]===st)delete TR[ref];else TR[ref]=st;try{localStorage.setItem("hp_track",JSON.stringify(TR))}catch(e){}}
+function ex(j){return j[9]||{}}
+function deReq(j){var x=ex(j);return x.de?x.de==="req":!!(j[5]&16)}
+function dd(){return D0.dom[S.dom]}
+function parseHash(){var t=(location.hash||"").replace("#","").split(".");if(PAGES.some(function(p){return p[0]===t[0]}))S.page=t[0];if(t[1]==="a"||t[1]==="b")S.dom=t[1]}
+function go(page,dom){S.page=page||S.page;S.dom=dom||S.dom;S.open=null;S.shown=40;try{history.replaceState(null,"","#"+S.page+"."+S.dom)}catch(e){}render(true)}
+
+function bars(vals,hi,w,h){
+  w=w||600;h=h||170;var ml=34,mb=22,mt=8,pw=w-ml-6,ph=h-mb-mt,mx=Math.max.apply(null,vals.concat([1])),step=mx<=10?2:mx<=50?10:mx<=200?50:mx<=1000?200:500;
+  var top=Math.ceil(mx/step)*step,o="",bw=pw/vals.length;
+  function Y(v){return mt+ph-v/top*ph}
+  for(var t=0;t<=top;t+=step)o+='<line class="grid" x1="'+ml+'" x2="'+(w-6)+'" y1="'+Y(t)+'" y2="'+Y(t)+'"/><text x="'+(ml-6)+'" y="'+(Y(t)+4)+'" text-anchor="end">'+t+'</text>';
+  vals.forEach(function(v,i){var x=ml+i*bw+bw*0.15;o+='<rect x="'+x+'" y="'+Y(v)+'" width="'+bw*0.7+'" height="'+Math.max(0,Y(0)-Y(v))+'" rx="2" fill="'+(i>=hi?"var(--accent)":"var(--add)")+'"/>';if(i%2===(vals.length-1)%2||vals.length<8)o+='<text x="'+(x+bw*0.35)+'" y="'+(h-6)+'" text-anchor="middle">'+fs(wkEnd(i))+'</text>'});
+  return '<svg class="bars" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="New postings per week">'+o+'</svg>';
+}
+function hbars(list,max){max=max||Math.max.apply(null,list.map(function(x){return x[1]}).concat([1]));return list.map(function(x){return '<div class="hb"><span class="l" title="'+esc(x[0])+'">'+esc(x[0])+'</span><div class="tr"><i style="width:'+(x[1]/max*100)+'%"></i></div><b>'+nf(x[1])+'</b></div>'}).join("")}
+function chg(wk,N){var r=0,p=0,i;for(i=0;i<N;i++){r+=wk[12-i];p+=wk[12-N-i]}return {r:r,p:p,d:r-p,pct:p?(r-p)/p*100:(r?100:0),fresh:!p&&r>0}}
+function spark(wk){var mx=Math.max.apply(null,wk.concat([1])),w=78,h=22,d=wk.map(function(v,i){return (i?"L":"M")+(i/12*w).toFixed(1)+" "+(h-2-v/mx*(h-4)).toFixed(1)}).join("");return '<svg class="spark" viewBox="0 0 78 22" aria-hidden="true"><path d="'+d+'" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
+function pctTxt(c){return c.d?(c.fresh?"new":(c.pct>0?"+":"−")+Math.abs(c.pct).toFixed(0)+"%"):"—"}
+
+/* ---------- Home ---------- */
+function pHome(){
+  var D=dd(),dm=DOM[S.dom],M=D0.meta,wk=D.wk,jobs=D0.jobs.filter(function(j){return j[7].indexOf(S.dom)>=0}).slice(0,6);
+  var st=D.st.map(function(n,i){return [D0.states[i],n]}).sort(function(a,b){return b[1]-a[1]}).slice(0,8);
+  return '<section class="hero"><p class="eyebrow">'+esc(dm.label)+' · live from the Bundesagentur für Arbeit</p>'+
+   '<h1>Who is hiring for '+esc(dm.scope)+' in Germany</h1>'+
+   '<p class="lead">'+nf(D.total)+' real postings from '+nf(D.nCompanies)+' employers, collected on '+fd(END)+' from the public job board of the German Federal Employment Agency. Nothing on these pages is simulated.</p></section>'+
+   '<div class="kpis"><div class="kpi"><small>Postings found</small><strong>'+nf(D.total)+'</strong><em>last 90 days, Germany only</em></div>'+
+   '<div class="kpi"><small>Employers</small><strong>'+nf(D.nCompanies)+'</strong><em>top 150 hold '+Math.round(D.top150share/D.total*100)+'% of postings</em></div>'+
+   '<div class="kpi"><small>New in the last 7 days</small><strong>'+nf(wk[12])+'</strong><em>'+(wk[11]?(wk[12]>=wk[11]?"+":"−")+Math.abs(Math.round((wk[12]-wk[11])/wk[11]*100))+"% vs the week before":"week before: none")+'</em></div>'+
+   '<div class="kpi"><small>Home office possible</small><strong>'+Math.round(D.flags.h/D.total*100)+'%</strong><em>as stated in the posting</em></div></div>'+
+   '<div class="cols"><div class="card"><h3>Employers with the most postings</h3>'+hbars(D.companies.slice(0,8).map(function(c){return [c[0],c[1]]}))+'</div>'+
+   '<div class="card"><h3>Where the postings are</h3>'+hbars(st)+'</div></div>'+
+   '<div class="card" style="margin-top:12px"><h3>New postings per week, last 13 weeks</h3>'+bars(wk,9)+'<p class="note">Weekly counts use the date a posting was first listed.</p></div>'+
+   '<h2 style="margin-top:24px">Latest postings</h2><div class="cols">'+jobs.map(jobCard).join("")+'</div>'+
+   '<div class="tiles"><button class="tile" data-go="map"><b>Hiring map</b><span>See where postings cluster and read the latest ones.</span></button><button class="tile" data-go="companies"><b>Companies</b><span>Search the top 150 employers and open their listings.</span></button><button class="tile" data-go="thesis"><b>Thesis</b><span>Master and Bachelor thesis postings for this domain.</span></button><button class="tile" data-go="stats"><b>Statistics</b><span>Who is speeding up, who is slowing down.</span></button><button class="tile" data-go="data"><b>Data</b><span>Exactly where the numbers come from and what they miss.</span></button></div>';
+}
+
+/* ---------- Job card + filters ---------- */
+function roleOf(t){var g=ROLES[S.dom],k;for(k in g)if(g[k].test(t))return k;return ""}
+function jobCard(j){
+  var fl=j[5],x=ex(j),tags=[];var rg=roleOf(j[1]);if(rg)tags.push(rg);if(fl&1)tags.push("Home office");if(S.page==="thesis")tags.push(/bachelor/i.test(j[1])&&!/master/i.test(j[1])?"Bachelor thesis":/master/i.test(j[1])?"Master thesis":"Thesis");else if(fl&8)tags.push("Entry / student");if(!(fl&4))tags.push("Part-time");if(fl&2)tags.push("Fixed-term");
+  if(x.de==="req")tags.push("German required");else if(x.de==="no")tags.push("No German needed");else if(x.de==="opt")tags.push("German optional");
+  if(x.s)tags.push("Staffing firm");if(x.g>1)tags.push(x.g+" locations");
+  var st=TR[j[0]],m=x.m?'<span class="match" title="Overlap with the skills in profile.json">'+x.m+'% match</span>':"";
+  function tb(k,l){return '<button class="trb'+(st===k?" on":"")+'" data-tr="'+esc(j[0])+'|'+k+'" aria-pressed="'+(st===k)+'">'+l+'</button>'}
+  return '<article class="job'+(st==="rejected"?" rej":"")+'"><div class="top">'+mono(j[2])+'<b>'+esc(j[2])+'</b>'+m+'<time>First found '+fs(Date.parse(j[4]+"T00:00:00Z"))+'</time></div>'+
+   '<a class="t" href="'+jobUrl(j[0])+'" target="_blank" rel="noopener">'+esc(j[1])+' ↗</a>'+
+   '<div class="loc">'+esc(j[3]||"Location not given")+(j[6]>=0?" · "+esc(D0.states[j[6]]):"")+'</div>'+
+   (tags.length?'<div class="tags">'+tags.map(function(t){return '<span class="tag">'+esc(t)+'</span>'}).join("")+'</div>':"")+
+   '<div class="trrow">'+tb("saved","Save")+tb("applied","Applied")+tb("rejected","Reject")+'</div></article>';
+}
+function activeF(){var f=S.f;return f.role!=="all"||f.sen!=="all"||f.date!=="all"||f.state!=="all"||f.de!=="all"||f.co!=="all"||f.remote||f.q||f.staff||f.mm!=="0"}
+function rows(){
+  var f=S.f,q=f.q.toLowerCase(),rx=f.role!=="all"?ROLES[S.dom][f.role]:null,days=f.date==="all"?0:+f.date;
+  return D0.jobs.filter(function(j){
+    if(j[7].indexOf(S.dom)<0)return false;
+    if(q&&(j[1]+" "+j[2]+" "+j[3]).toLowerCase().indexOf(q)<0)return false;
+    if(rx&&!rx.test(j[1]))return false;
+    if(f.sen==="entry"&&!(j[5]&8))return false; if(f.sen==="pro"&&(j[5]&8))return false;
+    if(f.de==="yes"&&!deReq(j))return false; if(f.de==="no"&&deReq(j))return false;
+    if(f.staff&&ex(j).s)return false; if(+f.mm&&(ex(j).m||0)<+f.mm)return false;
+    if(f.remote&&!(j[5]&1))return false;
+    if(f.state!=="all"&&String(j[6])!==f.state)return false;
+    if(f.co!=="all"&&j[2]!==f.co)return false;
+    if(days&&(END-Date.parse(j[4]+"T00:00:00Z"))/DAY>days)return false;
+    return true;});
+}
+
+/* ---------- Map ---------- */
+var SC=100,LON0=5.6,LAT0=55.2,KX=0.62;
+function px(lat,lon){return [(lon-LON0)*KX*SC,(LAT0-lat)*SC]}
+function heat(t){return "hsl("+(225+t*120)+" "+(55+t*20)+"% "+(36+t*19)+"%)"}
+function mapSvg(cells,max){
+  var o='<path class="outline" d="'+OUTLINE.map(function(p,i){var q=px(p[0],p[1]);return (i?"L":"M")+q[0].toFixed(1)+" "+q[1].toFixed(1)}).join("")+'Z"/>';
+  cells.forEach(function(c){var p=px(c[0]+0.1,c[1]-0.15),t=Math.log(1+c[2])/Math.log(1+max),sel=S.f.cell&&S.f.cell[0]===c[0]&&S.f.cell[1]===c[1];
+    o+='<rect class="cell'+(sel?" sel":"")+'" data-cell="'+c[0]+','+c[1]+'" data-n="'+c[2]+'" x="'+p[0].toFixed(1)+'" y="'+p[1].toFixed(1)+'" width="'+(0.3*KX*SC-0.6).toFixed(1)+'" height="'+(0.2*SC-0.6).toFixed(1)+'" rx="2" fill="'+heat(t)+'"/>'});
+  CITIES.forEach(function(c){var p=px(c[1],c[2]);o+='<text x="'+(p[0]+8).toFixed(1)+'" y="'+(p[1]+4).toFixed(1)+'">'+c[0]+'</text>'});
+  return '<svg class="map" id="mapsvg" viewBox="0 0 610 820" role="img" aria-label="Heat map of postings across Germany">'+o+'</svg>';
+}
+function fpanel(D){
+  var f=S.f,sts=D0.states.map(function(s,i){return '<option value="'+i+'"'+(f.state===String(i)?" selected":"")+'>'+esc(s)+'</option>'}).join("");
+  var cc={};D0.jobs.forEach(function(j){if(j[7].indexOf(S.dom)>=0)cc[j[2]]=(cc[j[2]]||0)+1});
+  var cos=Object.keys(cc).sort(function(a,b){return cc[b]-cc[a]}).slice(0,60).map(function(c){return '<option'+(f.co===c?" selected":"")+'>'+esc(c)+'</option>'}).join("");
+  var rg=Object.keys(ROLES[S.dom]).map(function(k){return '<option'+(f.role===k?" selected":"")+'>'+esc(k)+'</option>'}).join("");
+  function sg(key,opts){return '<div class="seg">'+opts.map(function(o){return '<button data-f="'+key+'" data-v="'+o[0]+'" aria-pressed="'+(f[key]===o[0])+'">'+o[1]+'</button>'}).join("")+'</div>'}
+  return '<div class="fpanel" role="dialog" aria-label="Filters">'+
+   '<label>Role group<select data-fs="role"><option value="all">All role groups</option>'+rg+'</select></label>'+
+   '<label>Seniority'+sg("sen",[["entry","Entry"],["all","All"],["pro","Pro"]])+'</label>'+
+   '<label>Listing date<select data-fs="date"><option value="all"'+(f.date==="all"?" selected":"")+'>All active</option><option value="7"'+(f.date==="7"?" selected":"")+'>Last 7 days</option><option value="14"'+(f.date==="14"?" selected":"")+'>Last 14 days</option><option value="30"'+(f.date==="30"?" selected":"")+'>Last 30 days</option></select></label>'+
+   '<label>Location<select data-fs="state"><option value="all">All of Germany</option>'+sts+'</select></label>'+
+   '<label>German required (from posting text when known)'+sg("de",[["no","No"],["all","All"],["yes","Yes"]])+'</label>'+
+   '<label>Staffing firms'+sg("staff",[["","Show"],["1","Hide"]])+'</label>'+
+   '<label>Minimum CV match<select data-fs="mm">'+[0,30,50,70].map(function(v){return '<option value="'+v+'"'+(f.mm===String(v)?" selected":"")+'>'+(v?v+"%+":"Any")+'</option>'}).join("")+'</select></label>'+
+   '<label>Company<select data-fs="co"><option value="all">All companies</option>'+cos+'</select></label>'+
+   '<button class="btn" data-act="reset">Reset filters</button></div>';
+}
+function pMap(){
+  var D=dd(),f=S.f,R=rows(),act=activeF(),cells,max=1,cn;
+  if(act){var m={};R.forEach(function(j){if(j[8]){var k=j[8][0]+","+j[8][1];m[k]=(m[k]||0)+1}});cells=Object.keys(m).map(function(k){var a=k.split(",");return [+a[0],+a[1],m[k]]})}else cells=D.cells;
+  cells.forEach(function(c){if(c[2]>max)max=c[2]});
+  var L=R;if(f.cell)L=R.filter(function(j){return j[8]&&j[8][0]===f.cell[0]&&j[8][1]===f.cell[1]});
+  var cos={};L.forEach(function(j){cos[j[2]]=1});
+  var vm=S.view;
+  var mapBox='<div class="mapbox">'+mapSvg(cells,max)+'<div class="tip" id="tip" hidden></div>'+(S.fOpen?fpanel(D):"")+
+    '<button class="ctl covbtn" data-act="cov">Coverage &amp; method</button>'+
+    (S.cov?'<div class="covnote">Each square is about 22 × 21 km. '+nf(D.geoExact)+' postings are placed by their city and '+nf(D.geoApprox)+' by postcode area. '+nf(D.noGeo)+' have no usable location and are not drawn.'+(act?" With filters on, the map counts only the newest "+D0.jobs.length+" listed postings.":"")+'</div>':"")+
+    '<div class="legendbar">Concentration Lower <i></i> Higher</div></div>';
+  var list='<div class="listcol">'+(L.length?L.slice(0,S.shown).map(jobCard).join(""):'<div class="empty">No postings match these filters.</div>')+(L.length>S.shown?'<button class="btn more" data-act="more">Show more</button>':"")+'</div>';
+  var stats=act||f.cell?Object.keys(cos).length+" companies · "+nf(L.length)+" postings in the newest "+D0.jobs.filter(function(j){return j[7].indexOf(S.dom)>=0}).length+" listed":nf(D.nCompanies)+" companies · "+nf(D.total)+" postings";
+  var fp=(vm==="list"&&S.fOpen)?fpanel(D).replace('class="fpanel"','class="fpanel" style="position:static;width:100%;margin-bottom:10px;box-shadow:none"'):"";
+  return '<h1 style="font-size:clamp(22px,3.4vw,32px);margin:22px 0 10px">Hiring map: '+esc(DOM[S.dom].label)+'</h1>'+
+   '<div class="controls"><label class="ctl search"><input id="mq" type="search" placeholder="Search jobs, companies or cities…" value="'+esc(f.q)+'" aria-label="Search postings"><span>'+stats+'</span></label>'+
+   '<button class="ctl'+(S.fOpen?" on":"")+'" data-act="filters" aria-expanded="'+S.fOpen+'">Filters</button>'+
+   '<button class="ctl'+(f.remote?" on":"")+'" data-act="remote" aria-pressed="'+f.remote+'">Home office</button>'+
+   '<div class="seg" role="group" aria-label="View">'+[["map","Map"],["split","Split"],["list","List"]].map(function(v){return '<button data-view="'+v[0]+'" aria-pressed="'+(vm===v[0])+'">'+v[1]+'</button>'}).join("")+'</div></div>'+
+   (f.cell?'<p class="hint">Showing one map square. <button class="btn" data-act="clearcell" style="padding:4px 10px">Clear square</button></p>':'')+
+   '<div class="mapbody v-'+vm+'">'+(vm==="list"?"":mapBox)+(vm==="map"?"":'<div>'+fp+list+'</div>')+'</div>'+
+   '<p class="hint">The list holds the newest '+D0.jobs.filter(function(j){return j[7].indexOf(S.dom)>=0}).length+' postings for this domain. Every link opens the original listing on arbeitsagentur.de.</p>';
+}
+
+/* ---------- Companies ---------- */
+function pCompanies(){
+  var D=dd(),q=S.cq.toLowerCase(),L=D.companies.map(function(c,i){return {c:c,i:i,r:chg(c[2],4)}}).filter(function(x){return !q||x.c[0].toLowerCase().indexOf(q)>=0});
+  var cmp={jobs:function(a,b){return b.c[1]-a.c[1]},"new":function(a,b){return b.r.r-a.r.r},name:function(a,b){return a.c[0].localeCompare(b.c[0])},remote:function(a,b){return b.c[5]-a.c[5]}}[S.csort];L.sort(cmp);
+  var out='<div class="row co hd"><div>Company</div><div class="r">Open jobs</div><div class="r">New, 4 wks</div><div class="r">Home office</div><div class="r">Entry level</div><div>Main city</div></div>';
+  if(!L.length)out+='<div class="empty">No employer matches that name.</div>';
+  L.forEach(function(x){var c=x.c,open=S.open===c[0];
+    out+='<div class="row co"><div><button class="co-btn" data-co="'+esc(c[0])+'" aria-expanded="'+open+'">'+mono(c[0])+'<span class="co-name">'+esc(c[0])+'</span><svg class="chev" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M5 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div><div class="r num"><b>'+nf(c[1])+'</b></div><div class="r num">'+nf(x.r.r)+'</div><div class="r num">'+c[5]+'%</div><div class="r num">'+nf(c[6])+'</div><div>'+esc(c[3]||"—")+'</div></div>';
+    if(open)out+='<div class="detail"><div class="dstats"><div class="dstat"><small>Open postings found</small><strong>'+nf(c[1])+'</strong><em>last 90 days</em></div><div class="dstat"><small>Based mostly in</small><strong style="font-size:20px">'+esc(c[3]||"—")+'</strong><em>'+(c[4]>=0?esc(D0.states[c[4]]):"")+'</em></div><div class="dstat"><small>Entry-level or student roles</small><strong>'+nf(c[6])+'</strong></div><div class="dlinks"><a class="btn" href="'+coUrl(c[0])+'" target="_blank" rel="noopener">Show jobs ↗</a></div></div><div class="tags">'+c[7].map(function(r){return '<span class="tag">'+esc(r)+'</span>'}).join("")+'</div></div>'});
+  return '<section class="hero"><h1>Companies &amp; coverage</h1><p class="lead">Employers with open '+esc(DOM[S.dom].scope)+' in Germany. We found '+nf(D.nCompanies)+' employers in this snapshot and list the 150 with the most postings.</p></section>'+
+   '<div class="controls" style="grid-template-columns:minmax(180px,1fr) auto"><label class="ctl search"><input id="cq" type="search" placeholder="Company name" value="'+esc(S.cq)+'" aria-label="Search companies"><span>'+L.length+' of '+D.companies.length+' companies</span></label>'+
+   '<select class="ctl" data-cs="1" aria-label="Sort by"><option value="jobs"'+(S.csort==="jobs"?" selected":"")+'>Most open jobs</option><option value="new"'+(S.csort==="new"?" selected":"")+'>Most new, 4 weeks</option><option value="remote"'+(S.csort==="remote"?" selected":"")+'>Most home office</option><option value="name"'+(S.csort==="name"?" selected":"")+'>Name A–Z</option></select></div>'+
+   '<div class="tablewrap"><div class="tbl" style="min-width:760px">'+out+'</div></div><p class="hint">Staffing and consulting firms such as Hays, Akkodis or FERCHAU appear as employers because they post openings under their own name.</p>';
+}
+
+/* ---------- Statistics ---------- */
+function pStats(){
+  var D=dd(),N=S.weeks,q=S.q.toLowerCase();
+  var L=D.companies.map(function(c){return {c:c,r:chg(c[2],N)}}).filter(function(x){return !q||x.c[0].toLowerCase().indexOf(q)>=0});
+  var cmp={jobs:function(a,b){return b.c[1]-a.c[1]},"new":function(a,b){return b.r.r-a.r.r},gain:function(a,b){return b.r.d-a.r.d},drop:function(a,b){return a.r.d-b.r.d},pct:function(a,b){return b.r.pct-a.r.pct}}[S.sort];L.sort(cmp);
+  var tot=chg(D.wk,N),st=D.st.map(function(n,i){return [D0.states[i],n]}).sort(function(a,b){return b[1]-a[1]}).slice(0,8);
+  function m(l,v){return '<div class="meter"><span>'+l+'</span><b class="num">'+Math.round(v/D.total*100)+'%</b><div class="tr"><i style="width:'+(v/D.total*100)+'%"></i></div></div>'}
+  var out='<div class="row hd"><div>Company</div><div class="r">Jobs</div><div class="r">Change</div><div class="plot"><div class="in"><span style="left:0">−100%</span><span style="left:25%">−50%</span><span style="left:50%">0%</span><span style="left:75%">+50%</span><span style="left:100%">+100%</span></div></div><div class="r">Change %</div><div class="r">Weekly</div></div>';
+  L.forEach(function(x){var c=x.c,r=x.r,open=S.open===c[0],cls=r.d>0?"pos":r.d<0?"neg":"flat";
+    var dot=r.d?'<span class="dot '+(r.d>0?"p":"n")+'" style="left:'+((Math.max(-100,Math.min(100,r.pct))+100)/2)+'%"></span>':"";
+    out+='<div class="row"><div><button class="co-btn" data-co="'+esc(c[0])+'" aria-expanded="'+open+'">'+mono(c[0])+'<span class="co-name">'+esc(c[0])+'</span><svg class="chev" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M5 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div><div class="r num"><b>'+nf(c[1])+'</b></div><div class="r num '+cls+'"><b>'+sgn(r.d)+'</b></div><div class="plot"><div class="in">'+dot+'</div></div><div class="r num '+cls+'">'+pctTxt(r)+'</div><div>'+spark(c[2])+'</div></div>';
+    if(open)out+='<div class="detail"><div class="dstats"><div class="dstat"><small>Postings found</small><strong>'+nf(c[1])+'</strong><em>'+fd(END-90*DAY)+' – '+fd(END)+'</em></div><div class="dstat"><small>New, last '+N+' wk</small><strong>'+nf(r.r)+'</strong><em>from '+fd(END-(N*7-1)*DAY)+'</em></div><div class="dstat"><small>New, '+N+' wk before</small><strong>'+nf(r.p)+'</strong><em>from '+fd(END-(2*N*7-1)*DAY)+'</em></div><div class="dstat"><small>Change</small><strong class="'+cls+'">'+sgn(r.d)+' <span style="font-size:13px;font-weight:500">'+pctTxt(r)+'</span></strong></div><div class="dlinks"><a class="btn" href="'+coUrl(c[0])+'" target="_blank" rel="noopener">Current jobs ↗</a></div></div>'+bars(c[2],13-N,600,150)+'<p class="hint">New postings per week. Highlighted bars are the last '+N+' weeks.</p></div>'});
+  return '<h1 id="stitle">How German employers’ new postings changed between <span class="chip">'+fd(END-(2*N*7-1)*DAY)+'</span> and <span class="chip">'+fd(END)+'</span></h1>'+
+   '<p class="lead"><span class="live">Real data</span> &nbsp;Change compares postings first listed in the last '+N+' weeks with the '+N+' weeks before. It counts new postings, not net open jobs, because the source does not show when a posting is removed. <b>Caution:</b> weekly counts only include postings still open today, so older weeks look smaller than they were. Compare employers with each other, not the market over time.</p>'+
+   '<div class="cols"><div class="card"><h3>New postings per week</h3>'+bars(D.wk,13-N)+'<p class="note">Last '+N+' weeks: '+nf(tot.r)+' ('+(tot.d>=0?"+":"−")+nf(Math.abs(tot.d))+' vs '+nf(tot.p)+' before). '+nf(D.older)+' postings were first listed before this window, usually reposted.</p></div>'+
+   '<div class="card"><h3>By state</h3>'+hbars(st)+'</div>'+
+   '<div class="card"><h3>Most common roles</h3>'+hbars(D.titles.slice(0,8))+'</div>'+
+   '<div class="card"><h3>What the postings say</h3><div class="meters">'+m("Entry level, student or intern",D.flags.entry)+m("Home office possible",D.flags.h)+m("Full-time",D.flags.v)+m("Fixed-term",D.flags.b)+m("German-language title (inferred)",D.flags.de)+'</div></div></div>'+
+   histBlock()+
+   '<div class="controls" style="grid-template-columns:minmax(180px,1fr) auto auto;margin-top:16px"><label class="ctl search"><input id="sq" type="search" placeholder="Search employers…" value="'+esc(S.q)+'" aria-label="Search employers"><span>'+L.length+' companies</span></label>'+
+   '<select class="ctl" data-sw="1" aria-label="Time range">'+[1,2,3,4,6].map(function(w){return '<option value="'+w+'"'+(N===w?" selected":"")+'>'+w+(w===1?" week":" weeks")+'</option>'}).join("")+'</select>'+
+   '<select class="ctl" data-ss="1" aria-label="Sort by"><option value="jobs"'+(S.sort==="jobs"?" selected":"")+'>Postings ↓</option><option value="new"'+(S.sort==="new"?" selected":"")+'>New postings ↓</option><option value="gain"'+(S.sort==="gain"?" selected":"")+'>Biggest gain ↓</option><option value="drop"'+(S.sort==="drop"?" selected":"")+'>Biggest drop ↑</option><option value="pct"'+(S.sort==="pct"?" selected":"")+'>Change % ↓</option></select></div>'+
+   '<div class="tablewrap"><div class="tbl">'+out+'</div></div>';
+}
+
+/* ---------- Thesis ---------- */
+function pThesis(){
+  var T=D0.thesis[S.dom],t=S.t,q=t.q.toLowerCase(),dm=DOM[S.dom];
+  var R=T.rows.filter(function(j){
+    if(q&&(j[1]+" "+j[2]+" "+j[3]).toLowerCase().indexOf(q)<0)return false;
+    if(t.lv==="master"&&!/master/i.test(j[1]))return false;
+    if(t.lv==="bachelor"&&!/bachelor/i.test(j[1]))return false;
+    if(t.state!=="all"&&String(j[6])!==t.state)return false;
+    return true});
+  var mast=T.rows.filter(function(j){return /master/i.test(j[1])}).length,bach=T.rows.filter(function(j){return /bachelor/i.test(j[1])}).length;
+  var last4=T.wk.slice(9).reduce(function(a,b){return a+b},0);
+  var co={};T.rows.forEach(function(j){co[j[2]]=(co[j[2]]||0)+1});
+  var top=Object.keys(co).map(function(k){return [k,co[k]]}).sort(function(a,b){return b[1]-a[1]}).slice(0,8);
+  var st=D0.states.map(function(n,i){return [n,T.rows.filter(function(j){return j[6]===i}).length]}).filter(function(x){return x[1]}).sort(function(a,b){return b[1]-a[1]}).slice(0,8);
+  var sts=D0.states.map(function(s2,i){return '<option value="'+i+'"'+(t.state===String(i)?" selected":"")+'>'+esc(s2)+'</option>'}).join("");
+  function lv(k,l){return '<button data-act="lv-'+k+'" aria-pressed="'+(t.lv===k)+'">'+l+'</button>'}
+  return '<section class="hero"><p class="eyebrow">'+esc(dm.label)+' · thesis and final-project postings</p><h1>Thesis topics in '+esc(dm.scope)+'</h1>'+
+   '<p class="lead"><span class="live">Real data</span> &nbsp;'+nf(T.total)+' postings from '+nf(T.nCompanies)+' employers whose title says Masterarbeit, Bachelorarbeit, Abschlussarbeit or thesis. Same source and date as the rest of the site. The list is complete for this search, not capped at 400.</p></section>'+
+   '<div class="kpis"><div class="kpi"><small>Thesis postings</small><strong>'+nf(T.total)+'</strong><em>open on '+fd(END)+'</em></div>'+
+   '<div class="kpi"><small>Master</small><strong>'+nf(mast)+'</strong><em>title mentions Master</em></div>'+
+   '<div class="kpi"><small>Bachelor</small><strong>'+nf(bach)+'</strong><em>title mentions Bachelor</em></div>'+
+   '<div class="kpi"><small>First listed, last 4 weeks</small><strong>'+nf(last4)+'</strong><em>'+nf(T.older)+' were listed earlier</em></div></div>'+
+   '<div class="cols"><div class="card"><h3>Employers with the most thesis postings</h3>'+hbars(top)+'</div><div class="card"><h3>By state</h3>'+hbars(st)+'</div></div>'+
+   '<div class="controls" style="grid-template-columns:minmax(180px,1fr) auto auto;margin-top:16px"><label class="ctl search"><input id="tq" type="search" placeholder="Search topic, company or city…" value="'+esc(t.q)+'" aria-label="Search thesis postings"><span>'+R.length+' of '+T.rows.length+' postings</span></label>'+
+   '<div class="seg" role="group" aria-label="Level">'+lv("all","All")+lv("master","Master")+lv("bachelor","Bachelor")+'</div>'+
+   '<select class="ctl" data-ts="1" aria-label="State"><option value="all">All of Germany</option>'+sts+'</select></div>'+
+   '<div class="cols" style="margin-top:12px">'+(R.length?R.slice(0,t.shown).map(jobCard).join(""):'<div class="empty">No thesis postings match these filters.</div>')+'</div>'+
+   (R.length>t.shown?'<p><button class="btn more" data-act="tmore">Show more</button></p>':"")+
+   '<p class="hint">Domain is assigned by keywords in the title and occupation, so some topics only loosely fit. Postings that mention both domains show in both. Employers can list a thesis as an internship or student job without the word thesis in the title; those are missed. Every link opens the original listing on arbeitsagentur.de.</p>';
+}
+
+/* ---------- Data ---------- */
+function pData(){
+  var M=D0.meta,A=D0.dom.a,B=D0.dom.b;
+  return '<section class="hero"><p class="eyebrow">Data handling</p><h1>Where these numbers come from</h1><p class="lead">Every posting on this site is a real listing from the public job board of the German Federal Employment Agency (Bundesagentur für Arbeit). Nothing is simulated, and nothing about you is collected.</p></section>'+
+   '<div class="dgrid"><div class="card dcard"><small>Source</small><h3>Bundesagentur für Arbeit</h3><p>The Jobsuche service behind arbeitsagentur.de. It lists postings that employers and agencies publish there, so it is not the whole market. Platforms such as LinkedIn are not included.</p></div>'+
+   '<div class="card dcard"><small>Snapshot</small><h3>'+fd(END)+'</h3><p>'+M.queries+' searches, each limited to postings from the last '+M.windowDays+' days and to Germany. '+nf(M.raw)+' unique postings came back, '+nf(M.kept)+' passed the role filter ('+nf(A.total)+' for Data &amp; AI, '+nf(B.total)+' for Industry 4.0 &amp; Robotics).</p></div></div>'+
+   '<div class="sect"><h2>What the numbers mean</h2><div class="dgrid">'+
+   '<div class="card dcard"><small>Postings found</small><h3>Open listings</h3><p>Distinct postings in the snapshot. A posting that matches both domains counts in both.</p></div>'+
+   '<div class="card dcard"><small>New postings</small><h3>By first listing date</h3><p>Weeks run Tuesday to Monday ending '+fd(END)+'. The date is when the Agency first listed the posting.</p></div>'+
+   '<div class="card dcard"><small>Change</small><h3>Recent vs earlier</h3><p>New postings in the last N weeks minus the N weeks before. It shows hiring pace, not the count of open jobs.</p></div></div></div>'+
+   '<div class="sect"><h2>What it misses</h2><ul class="lim">'+
+   '<li><b>Survivorship bias.</b> Weekly counts only include postings that are still open today. Older weeks therefore look smaller than they really were, and the recent rise is partly an artefact. Compare employers with each other, not the market over time.</li>'+
+   '<li><b>History.</b> '+((D0.history&&D0.history.runs.length>1)?D0.history.runs.length+' weekly snapshots recorded, so closed postings and net change are real. ':'Only one snapshot so far, so removals and filled jobs are invisible. ')+'Closure needs two consecutive missed runs because searches are capped at 500 per term.</li>'+
+   '<li><b>CV match and German-required.</b> Match is keyword overlap with profile.json, not a judgement of fit. German-required is read from the posting text for the newest postings; where no text was fetched it falls back to the title guess.</li>'+
+   '<li><b>Staffing firms.</b> Known staffing and recruiting firms are tagged, not removed. The list is a regex and incomplete.</li>'+
+   '<li><b>Capped searches.</b> Each search returns at most 500 postings, so broad terms are cut off. Totals are lower bounds.</li>'+
+   '<li><b>Keyword filter.</b> Roles are chosen by words in the title, so some false hits and misses remain. Apprenticeships are excluded.</li>'+
+   '<li><b>Reposts.</b> Employers that repost keep an older first-listing date. '+nf(A.older)+' (Data &amp; AI) and '+nf(B.older)+' (Industry 4.0 &amp; Robotics) postings fall before the 13-week window.</li>'+
+   '<li><b>Employer names.</b> Legal suffixes and branch names are trimmed to group postings, which can merge or split a few companies. Staffing firms appear under their own name.</li>'+
+   '<li><b>Locations.</b> Cities were placed with OpenStreetMap Nominatim for the 260 busiest cities. Others use the average of their postcode area, so those squares are approximate.</li>'+
+   '<li><b>Language and level.</b> "German-language title" and "Entry level" are inferred from the title text, not stated by the employer.</li>'+
+   '<li><b>Thesis page.</b> '+nf(D0.thesis.a.total)+' (Data &amp; AI) and '+nf(D0.thesis.b.total)+' (Industry 4.0 &amp; Robotics) postings whose title contains Masterarbeit, Bachelorarbeit, Abschlussarbeit or thesis, found with '+135+' searches. Titles from the source are sometimes cut off by the Agency itself.</li>'+
+   '<li><b>List size.</b> The Hiring map list holds the newest 400 postings per domain. Company pages link to the full listing on arbeitsagentur.de.</li>'+
+   '<li><b>Not shown.</b> Ratings, industry, company size and salary are not in the source, so they are left out instead of guessed.</li></ul></div>'+
+   '<div class="sect"><h2>Your data</h2><div class="dgrid"><div class="card dcard"><small>Visitors</small><h3>Nothing is collected</h3><p>This page has no accounts, no analytics and no tracking. Theme and filters are not stored. Saved, applied and rejected marks stay in this browser only.</p></div><div class="card dcard"><small>Links</small><h3>Opens the original</h3><p>Job and company links open arbeitsagentur.de in a new tab. This site is not affiliated with the Agency or any employer.</p></div></div></div>';
+}
+
+/* ---------- My jobs ---------- */
+function pMine(){
+  var all={};D0.jobs.forEach(function(j){all[j[0]]=j});["a","b"].forEach(function(k){D0.thesis[k].rows.forEach(function(j){all[j[0]]=j})});
+  var groups=[["applied","Applied"],["saved","Saved"],["rejected","Rejected"]],n=Object.keys(TR).length,out="";
+  groups.forEach(function(g){var refs=Object.keys(TR).filter(function(r){return TR[r]===g[0]});if(!refs.length)return;
+    out+='<h2 style="margin:22px 0 8px">'+g[1]+' ('+refs.length+')</h2><div class="listcol">'+refs.map(function(r){var j=all[r];
+      return j?jobCard(j):'<article class="job"><a class="t" href="'+jobUrl(r)+'" target="_blank" rel="noopener">Posting '+esc(r)+' ↗</a><div class="loc">No longer in the newest listed postings. The link may still work or the posting may have closed.</div><div class="trrow"><button class="trb on" data-tr="'+esc(r)+'|'+g[0]+'">Remove</button></div></article>'}).join("")+'</div>'});
+  return '<section class="hero"><h1>My jobs</h1><p class="lead">Your saved, applied and rejected postings. They are kept in this browser only: no account, nothing is uploaded. Clearing site data or switching browser starts a fresh list.</p></section>'+(n?out:'<div class="empty">Nothing yet. Use Save, Applied or Reject on any posting card.</div>');
+}
+/* ---------- History ---------- */
+function histBlock(){
+  var H=(D0.history||{runs:[]}),R=H.runs||[];
+  if(R.length<2)return '<div class="card" style="margin-top:16px"><h3>Real history</h3><p class="note">'+(R.length?'One snapshot so far ('+esc(R[0].date)+').':'No weekly snapshots recorded yet.')+' Net change, filled and removed postings need at least two weekly runs of the collector. This section fills in on its own; until then, nothing is estimated.</p></div>';
+  var k=S.dom,v=R.map(function(r){return r[k]}),last=R[R.length-1],prev=R[R.length-2];
+  var rows=R.slice().reverse().slice(0,12).map(function(r){return '<div class="hrow"><span>'+esc(r.date)+'</span><b class="num">'+nf(r[k])+'</b><span class="num">+'+nf(r.added)+' new</span><span class="num">−'+nf(r.closed)+' closed'+(r.complete?"":" (run incomplete)")+'</span></div>'}).join("");
+  return '<div class="card" style="margin-top:16px"><h3>Open postings by weekly snapshot</h3>'+bars(v,v.length-1)+'<p class="note">Since '+esc(prev.date)+': '+(last[k]-prev[k]>=0?"+":"−")+nf(Math.abs(last[k]-prev[k]))+' open postings. A posting counts as closed only after it is missing in two consecutive runs.</p><div class="hist">'+rows+'</div></div>';
+}
+/* ---------- Shell ---------- */
+function shell(){
+  $("nav").innerHTML=PAGES.map(function(p){return '<button class="pg" data-go="'+p[0]+'"'+(S.page===p[0]?' aria-current="page"':"")+'>'+p[1]+'</button>'}).join("");
+  $("domains").innerHTML=["a","b"].map(function(k){return '<button class="dm" data-dom="'+k+'" aria-pressed="'+(S.dom===k)+'"><b>'+esc(DOM[k].label)+'</b><span>'+nf(D0.dom[k].total)+' postings · '+nf(D0.dom[k].nCompanies)+' employers</span></button>'}).join("");
+  $("foot").innerHTML='Source: Bundesagentur für Arbeit Jobsuche, snapshot '+fd(END)+'. Real postings, collected live; see the Data page for method and limits.';
+}
+function render(top){
+  var ae=document.activeElement,id=ae&&ae.id,ss=ae&&ae.selectionStart;
+  shell();
+  $("app").innerHTML={home:pHome,map:pMap,companies:pCompanies,stats:pStats,thesis:pThesis,mine:pMine,data:pData}[S.page]();
+  if(top)window.scrollTo(0,0);
+  if(id&&$(id)){$(id).focus();try{$(id).setSelectionRange(ss,ss)}catch(e){}}
+}
+document.addEventListener("click",function(e){
+  var t=e.target.closest("[data-go],[data-dom],[data-co],[data-view],[data-f],[data-act],[data-tr]");if(!t)return;
+  if(t.dataset.tr){var q=t.dataset.tr.split("|");trSet(q[0],q[1]);render();return}
+  if(t.dataset.go){go(t.dataset.go);return}
+  if(t.dataset.dom){S.f=Object.assign({},S.f,{role:"all",co:"all",cell:null});go(null,t.dataset.dom);return}
+  if(t.dataset.co!==undefined){S.open=S.open===t.dataset.co?null:t.dataset.co;render();return}
+  if(t.dataset.view){S.view=t.dataset.view;render();return}
+  if(t.dataset.f){S.f[t.dataset.f]=t.dataset.v;S.f.cell=null;S.shown=40;render();return}
+  var a=t.dataset.act;
+  if(a==="filters")S.fOpen=!S.fOpen;
+  else if(a==="remote"){S.f.remote=!S.f.remote;S.shown=40}
+  else if(a==="reset"){S.f={role:"all",sen:"all",date:"all",state:"all",de:"all",co:"all",remote:false,cell:null,q:"",staff:"",mm:"0"};S.shown=40}
+  else if(a==="cov")S.cov=!S.cov;
+  else if(a==="more")S.shown+=40;
+  else if(a==="tmore")S.t.shown+=40;
+  else if(a&&a.indexOf("lv-")===0){S.t.lv=a.slice(3);S.t.shown=40}
+  else if(a==="clearcell")S.f.cell=null;
+  render();
+});
+document.addEventListener("click",function(e){var c=e.target.closest&&e.target.closest("rect.cell");if(!c)return;var p=c.dataset.cell.split(",").map(Number);S.f.cell=(S.f.cell&&S.f.cell[0]===p[0]&&S.f.cell[1]===p[1])?null:p;S.shown=40;render()});
+document.addEventListener("input",function(e){var t=e.target;if(t.id==="mq"){S.f.q=t.value;S.f.cell=null;S.shown=40;render()}else if(t.id==="cq"){S.cq=t.value;render()}else if(t.id==="sq"){S.q=t.value;render()}else if(t.id==="tq"){S.t.q=t.value;S.t.shown=40;render()}});
+document.addEventListener("change",function(e){var t=e.target;if(t.dataset.fs){S.f[t.dataset.fs]=t.value;S.f.cell=null;S.shown=40}else if(t.dataset.cs)S.csort=t.value;else if(t.dataset.ts){S.t.state=t.value;S.t.shown=40}else if(t.dataset.sw)S.weeks=+t.value;else if(t.dataset.ss)S.sort=t.value;else return;render()});
+document.addEventListener("mousemove",function(e){var tip=$("tip"),c=e.target.closest&&e.target.closest("rect.cell");if(!tip)return;if(!c){tip.hidden=true;return}var b=c.closest(".mapbox").getBoundingClientRect();tip.hidden=false;tip.textContent=c.dataset.n+(c.dataset.n==="1"?" posting":" postings")+" in this area";tip.style.left=Math.min(e.clientX-b.left+12,b.width-170)+"px";tip.style.top=(e.clientY-b.top+12)+"px"});
+$("theme").addEventListener("click",function(){var r=document.documentElement,c=r.getAttribute("data-theme");if(!c)c=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";r.setAttribute("data-theme",c==="dark"?"light":"dark")});
+window.addEventListener("hashchange",function(){parseHash();render(true)});
+parseHash();render();
+})();
+</script>

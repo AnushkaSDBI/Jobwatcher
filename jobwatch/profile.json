@@ -1,0 +1,7 @@
+{
+  "name": "Anu",
+  "domain": "a",
+  "skills": ["python","sql","bigquery","azure","nlp","langgraph","langchain","llm","rag","power bi","tableau","etl","machine learning","pandas","spark","dbt","docker","data engineer","data scientist","business intelligence"],
+  "german": "B1",
+  "weights": {"title": 3, "body": 1}
+}
