@@ -1,27 +1,184 @@
 # jobwatch
 
-Weekly snapshots of German job postings (Bundesagentur für Arbeit) for two domains, plus theses, with a static site on top.
-Domain A: Data / BI / ML / NLP / AI. Domain B: Industry 4.0 / electrical / robotics.
+A weekly job-market tracker for Germany. It collects postings from the Bundesagentur für Arbeit job board, keeps a snapshot history, and publishes a static site where you can search, filter and track jobs.
+
+It covers two domains plus theses:
+
+| Domain | Scope |
+|---|---|
+| **A** | Data science, BI, ML, NLP, AI |
+| **B** | Industry 4.0, electrical engineering, automation, robotics |
+| **Theses** | Master / Bachelor / Abschlussarbeit postings in either domain |
+
+No server, no database, no accounts. The collector is a Node script, the history is one JSON file in the repo, and the site is plain HTML and JS.
+
+## What you get
+
+- **Hiring map, companies, statistics:** postings per state, per city square, per employer, per week.
+- **CV match score:** keyword overlap between a posting and the skills in `profile.json`.
+- **German-required filter:** read from the posting text, with the title as a fallback when no text was fetched.
+- **Staffing firms** (FERCHAU, Hays, Brunel and similar) are tagged and can be hidden.
+- **Duplicate grouping:** the same title and company across several cities shows as one card.
+- **My jobs:** mark postings Saved, Applied or Rejected. Stored in your browser only.
+- **Real history:** after two or more weekly runs, the site shows open-posting counts per snapshot and which postings closed.
 
 ## How it works
-Every Monday a GitHub Action runs: tests → `collect.mjs` → `llm-classify.mjs` (optional) → `build-site.mjs` → commit `data/state.json` → deploy `site/` to GitHub Pages.
-History lives in `data/state.json` (ref → first seen, last seen, closed). A posting is marked closed only after it is missing in two consecutive complete runs, because each search is capped at 500 results.
 
-## Setup (10 minutes)
-1. Create a GitHub repo, push this folder.
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#ffffff','primaryBorderColor':'#555555','primaryTextColor':'#222222','lineColor':'#555555','fontFamily':'sans-serif'}}}%%
+flowchart TD
+    subgraph SRC[" Source "]
+        API["Bundesagentur Jobsuche API<br/>search v6 · details v4"]
+    end
+
+    subgraph GH[" GitHub Actions · every Monday "]
+        T["test/run.mjs<br/>offline tests"]
+        C["collect.mjs<br/>search, filter, merge"]
+        L["llm-classify.mjs<br/>optional, Claude Haiku"]
+        B["build-site.mjs<br/>aggregate, group, history"]
+        T --> C --> L --> B
+    end
+
+    subgraph REPO[" Repository "]
+        S[("data/state.json<br/>history of all postings")]
+        P["profile.json<br/>your skills"]
+        W["site/*.js<br/>generated data files"]
+    end
+
+    PG["GitHub Pages<br/>static site"]
+    U["Browser<br/>filters, match score,<br/>Saved / Applied / Rejected<br/>in localStorage"]
+
+    API -->|postings| C
+    API -->|posting text| C
+    P --> C
+    C <-->|read / write| S
+    L <-->|reclassify| S
+    S --> B
+    B --> W
+    W --> PG --> U
+
+    classDef box fill:#ffffff,stroke:#555555,color:#222222;
+    classDef store fill:#eeeeee,stroke:#555555,color:#222222;
+    class API,T,C,L,B,P,W,PG,U box;
+    class S store;
+    style SRC fill:#fafafa,stroke:#999999,stroke-dasharray: 4 3
+    style GH fill:#fafafa,stroke:#999999,stroke-dasharray: 4 3
+    style REPO fill:#fafafa,stroke:#999999,stroke-dasharray: 4 3
+```
+
+Each weekly run reads `data/state.json`, merges the new snapshot into it, and commits it back. That file is the only thing that persists between runs.
+
+Run weekly by `.github/workflows/weekly.yml`, or by hand.
+
+**Closing logic.** The API returns at most 500 results per search term, so a posting can disappear from one run without being closed. A posting is marked closed only after it is missing from two consecutive complete runs. A run counts as incomplete if more than 10% of the searches fail, and incomplete runs never close anything.
+
+## Requirements
+
+- Node.js 20 or newer (`node -v` to check)
+- Python 3 or any static file server, only to view the site locally
+- A GitHub account, only if you want the weekly automation
+
+## Quick start (local)
+
+```bash
+git clone <your-repo-url> jobwatch
+cd jobwatch
+
+node test/run.mjs          # offline tests, no network
+node collect.mjs           # real data from the API
+node build-site.mjs        # writes site/*.js
+cd site && python -m http.server 8000
+```
+
+Open http://localhost:8000.
+
+On Windows PowerShell, set variables like this before `node collect.mjs`:
+
+```powershell
+$env:MAX_DETAILS=20
+```
+
+The first full run takes a while: roughly 40 search terms with paging, then up to 300 job-detail requests, all rate-limited on purpose. Use a small `MAX_DETAILS` for a quick trial.
+
+`build-site.mjs` refuses to run if `data/state.json` is empty, so you can't overwrite the site with zeros.
+
+## Run it weekly on GitHub
+
+1. Create a GitHub repo and push this folder.
 2. Settings → Pages → Source: **GitHub Actions**.
-3. Actions → *weekly-collect-and-deploy* → **Run workflow** (first run takes ~30–60 min because of rate limiting).
-4. Optional: add secret `ANTHROPIC_API_KEY` to let Claude (Haiku) re-classify postings that match both domains.
+3. Actions → *weekly-collect-and-deploy* → **Run workflow**.
+4. From then on it runs every Monday at 05:17 UTC.
 
-## Edit
-- `profile.json`: your skills, drives the CV match score (keyword overlap, not a fit judgement).
-- `lib/classify.mjs`: queries, domain regexes, staffing-firm list, German-required patterns.
-- Local check, no network: `npm test`.
+Each run executes the offline tests first, collects, builds, commits `data/state.json` back to the repo, and deploys `site/`. The history lives in that committed file, so don't delete it.
 
-## Honest limits
-- Not tested against the live API from the build sandbox (no network there). The offline test uses recorded response shapes.
-- Real history, net change and closed postings only exist after ≥2 weekly runs.
-- Source is the Agency job board only. LinkedIn/Indeed/StepStone block scraping; company career-page APIs (Greenhouse, Personio, SmartRecruiters) are not included.
-- German-required is read from posting text for up to 300 newest postings per run; the rest fall back to a title guess until fetched in later runs.
-- Staffing-firm detection is a regex list, incomplete.
-- The API is unofficial-but-public. Keep the delay settings; be polite.
+Optional: add a repository secret named `ANTHROPIC_API_KEY`. The workflow then asks Claude (Haiku) to re-classify postings that matched both domains. Without the secret that step is skipped.
+
+## Configuration
+
+| What | Where |
+|---|---|
+| Your skills, used for the match score | `profile.json` → `skills` |
+| Search terms per domain and thesis | `lib/classify.mjs` → `QUERIES` |
+| Domain keyword rules | `lib/classify.mjs` → `RX_A`, `RX_B` |
+| Staffing-firm list | `lib/classify.mjs` → `RX_STAFF` |
+| German-required patterns | `lib/classify.mjs` → `DE_REQ`, `DE_OPT`, `EN_ONLY` |
+| Time window (default 90 days) | env `SINCE_DAYS` |
+| Job-detail fetches per run (default 300) | env `MAX_DETAILS` |
+
+Edit the match skills in `profile.json`, then run the collector again. Scores are computed at collect time, not in the browser.
+
+## Project layout
+
+```
+collect.mjs         search + detail fetch, merge into state, closure detection
+build-site.mjs      state → site data files (grouping, aggregates, history)
+llm-classify.mjs    optional Claude re-classification of ambiguous postings
+profile.json        your skills for the match score
+lib/classify.mjs    queries, regexes, scoring, normalisation (pure functions)
+data/state.json     the history (created by the first run)
+site/               static site: index.html + generated d0, dca, dcb, dj1, dt, dh .js
+test/               offline test with a recorded-shape fixture and mock API
+.github/workflows/  weekly job
+```
+
+## Data
+
+- **Source:** the Jobsuche service behind arbeitsagentur.de (public, key `jobboerse-jobsuche`). Search uses the `v6` endpoint, job text uses `v4`. The `v6` details endpoint returns 403.
+- **Scope:** Germany only. The API also returns Austrian and Swiss postings, which are dropped.
+- **Dates:** a posting's date is its first publication date at the Agency. Reposts keep their old date.
+- **Site data:** the list holds the newest 400 postings per domain, thesis list up to 300 per domain. Company tables show the top 150 employers per domain.
+
+## Limits
+
+- **One source.** It covers the Agency board only. LinkedIn, Indeed and StepStone block scraping. Company career-page APIs (Greenhouse, Personio, SmartRecruiters) are not included.
+- **No history on day one.** Net change and closed postings need at least two weekly runs. The weekly counts of a single snapshot undercount older weeks, because postings that already closed are missing.
+- **500 results per search term.** Broad terms are cut off, so totals are lower bounds.
+- **Keyword classification.** Domains are decided by words in the title and job categories. Some false hits and misses remain. The optional Claude pass only looks at postings that matched both domains.
+- **Match score is not fit.** It counts skill keywords, nothing more.
+- **German-required needs the posting text.** Only the newest `MAX_DETAILS` postings per run get it. The rest use a title guess until later runs fetch them.
+- **Staffing detection is a regex list** and misses firms not on it.
+- **No salary, rating, company size or industry.** The source doesn't provide them.
+- **Browser-only tracking.** Saved/Applied/Rejected marks are stored in `localStorage`. Clearing site data or switching browser loses them.
+
+## Troubleshooting
+
+| Symptom | Cause / fix |
+|---|---|
+| `npm` or `node` not recognized | Node isn't installed or the terminal predates the install. Install Node LTS, then fully restart the terminal. |
+| Every search logs `0` | The API response format changed or the API is unreachable. The collector now aborts in that case. Print one raw response and check the result key (currently `ergebnisliste`). |
+| `data/state.json has no jobs` | Run `node collect.mjs` before `node build-site.mjs`. |
+| Site shows `0 postings` or garbled umlauts | Old build. Use the current `site/index.html` and re-run `build-site.mjs`. |
+| `HTTP 403` or `429` in the log | Rate limiting or blocking. Raise `delay` in `collect.mjs`, wait, and retry. |
+| Actions run can't push | Settings → Actions → General → Workflow permissions → *Read and write*. |
+
+## Notes on using the API
+
+It's a public but unofficial interface and can change without notice. The collector sends a small delay between requests and a descriptive User-Agent. Keep it that way, and keep the schedule weekly.
+
+## Tests
+
+```bash
+node test/run.mjs
+```
+
+Runs the collector against a mock API over three simulated weekly runs and checks: domain classification, staffing tags, German-required detection, duplicate grouping, closure after two missed runs, Austria filtering, and the optional Claude pass with a mocked response. It does not call the real API.
